@@ -1,5 +1,5 @@
 {
-  "name": "inbox",
+  "name": "waytohealth-inbox",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -38,5 +38,6 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {}
-  }
+  },
+  "version": "0.0.1"
 }
