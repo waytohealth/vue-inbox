@@ -1,9 +1,22 @@
 {
   "name": "waytohealth-inbox",
+  "main": "dist/waytohealth-inbox.ssr.js",
+  "browser": "dist/waytohealth-inbox.esm.js",
+  "module": "dist/waytohealth-inbox.esm.js",
+  "unpkg": "dist/waytohealth-inbox.min.js",
+
+  "files": [
+    "dist/*",
+    "src/**/*.vue"
+  ],
+  "sideEffects": false,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "vue-cli-service serve dev/serve.js",
+    "prebuild": "rimraf ./dist",
+    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
+    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
+    "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
+    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
   "dependencies": {
     "@vue/composition-api": "^1.6.3",
@@ -13,20 +26,26 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/preset-env": "^7.14.7",
+    "@rollup/plugin-alias": "^3.1.2",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-replace": "^2.4.2",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "vue-template-compiler": "2.6.14"
+    "vue-template-compiler": "2.6.14",
+    "cross-env": "^7.0.3",
+    "minimist": "^1.2.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.52.8",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-vue": "^5.1.9"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "ie 11"
-  ],
   "eslintConfig": {
     "root": true,
     "env": {
