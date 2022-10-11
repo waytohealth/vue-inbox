@@ -4,7 +4,6 @@
   "browser": "dist/waytohealth-inbox.esm.js",
   "module": "dist/waytohealth-inbox.esm.js",
   "unpkg": "dist/waytohealth-inbox.min.js",
-
   "files": [
     "dist/*",
     "src/**/*.vue"
@@ -36,15 +35,15 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "vue-template-compiler": "2.6.14",
-    "cross-env": "^7.0.3",
     "minimist": "^1.2.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-vue": "^5.1.9"
+    "rollup-plugin-vue": "^5.1.9",
+    "vue-template-compiler": "2.6.14"
   },
   "eslintConfig": {
     "root": true,
@@ -60,5 +59,5 @@
     },
     "rules": {}
   },
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
