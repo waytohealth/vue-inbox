@@ -6,6 +6,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.6.3",
+    "pinia": "2.0",
     "vue": "2.6"
   },
   "devDependencies": {
