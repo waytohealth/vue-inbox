@@ -1,9 +1,9 @@
 {
-  "name": "waytohealth-inbox",
-  "main": "dist/vue-inbox.ssr.js",
-  "browser": "dist/vue-inbox.esm.js",
-  "module": "dist/vue-inbox.esm.js",
-  "unpkg": "dist/vue-inbox.min.js",
+  "name": "@waytohealth/inbox-component",
+  "main": "dist/inbox-component.ssr.js",
+  "browser": "dist/inbox-component.esm.js",
+  "module": "dist/inbox-component.esm.js",
+  "unpkg": "dist/inbox-component.min.js",
   "files": [
     "dist/*",
     "src/**/*.vue"
@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@vue/composition-api": "^1.6.3",
-    "pinia": "2.0",
     "vue": "2.6"
   },
   "devDependencies": {
@@ -59,5 +58,5 @@
     },
     "rules": {}
   },
-  "version": "0.0.4"
+  "version": "0.0.1"
 }

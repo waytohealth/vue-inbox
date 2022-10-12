@@ -84,7 +84,7 @@ if (!argv.format || argv.format === 'es') {
     input: 'src/entry.esm.js',
     external,
     output: {
-      file: 'dist/vue-inbox.esm.js',
+      file: 'dist/inbox-component.esm.js',
       format: 'esm',
       exports: 'named',
     },
@@ -116,7 +116,7 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: 'dist/vue-inbox.ssr.js',
+      file: 'dist/inbox-component.ssr.js',
       format: 'cjs',
       name: 'InboxComponent',
       exports: 'auto',
@@ -145,7 +145,7 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: 'dist/vue-inbox.min.js',
+      file: 'dist/inbox-component.min.js',
       format: 'iife',
       name: 'InboxComponent',
       exports: 'auto',
