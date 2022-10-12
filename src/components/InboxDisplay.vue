@@ -14,15 +14,18 @@
 </template>
 
 <script>
-import {useMessageStore} from "../stores/message";
-import {mapState} from "pinia";
 export default {
   name: "InboxDisplay",
+  props: {
+    store: {
+      type:Object,
+      required: true
+    }
+  },
   computed: {
-    ...mapState(useMessageStore,  ['messages']),
     sortedMessages() {
-      if (this.messages.length) {
-        let tmp = this.messages;
+      if (this.store.messages?.length) {
+        let tmp = this.store.messages;
         return tmp.sort(function(a,b) {
           if ((a.sent_at || a.created_at) > (b.sent_at || b.created_at)) {
             return 1;
@@ -46,9 +49,8 @@ export default {
     },
   },
   async mounted() {
-    const messageStore = useMessageStore();
     this.loading = true;
-    messageStore.loadMessages()
+    this.store.loadMessages()
         .then(() => {
           this.loading = false
         }).catch((e) => {

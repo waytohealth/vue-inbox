@@ -1,16 +1,16 @@
 <template>
   <div>
     <h2>SMS Inbox</h2>
-    <InboxDisplay />
-    <InboxInput />
+    <InboxDisplay :store="store"/>
+    <InboxInput :store="store"/>
   </div>
 </template>
 
 <script>
-import {useMessageStore} from "./stores/message";
-import {useAuthStore} from "./stores/auth";
 import InboxDisplay from "./components/InboxDisplay";
 import InboxInput from "./components/InboxInput";
+import store from './stores/inbox'
+
 export default {
   name: "InboxComponent",
   components: {
@@ -41,18 +41,16 @@ export default {
       required: true
     }
   },
-  beforeMount() {
-    const authStore = useAuthStore();
-    const messageStore = useMessageStore();
-
-    authStore.method = this.auth.method;
-    if (this.auth.apiKey) {
-      authStore.apiKey = this.auth.apiKey
+  data() {
+    return {
+      store: store
     }
-
-    messageStore.baseUrl = this.apiBaseUrl;
-    messageStore.participant = this.participantId;
-    messageStore.study = this.studyId;
+  },
+  beforeMount() {
+    this.store.apiBaseUrl = this.apiBaseUrl;
+    this.store.participantId = this.participantId;
+    this.store.studyId = this.studyId;
+    this.store.auth = this.auth;
   }
 }
 </script>

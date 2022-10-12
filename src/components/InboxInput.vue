@@ -6,15 +6,18 @@
 </template>
 
 <script>
-import {useMessageStore} from "../stores/message";
 export default {
   name: "InboxInput",
+  props: {
+    store: {
+      type:Object,
+      required: true
+    }
+  },
   methods: {
     async sendMessage() {
-      console.log("Content: " + this.textContent);
       if (this.textContent.length) {
-        const messageStore = useMessageStore();
-        await messageStore.sendMessage(this.textContent);
+        await this.store.sendMessage(this.textContent);
         this.textContent = "";
       }
     }
