@@ -1,9 +1,9 @@
 {
   "name": "waytohealth-inbox",
-  "main": "dist/waytohealth-inbox.ssr.js",
-  "browser": "dist/waytohealth-inbox.esm.js",
-  "module": "dist/waytohealth-inbox.esm.js",
-  "unpkg": "dist/waytohealth-inbox.min.js",
+  "main": "dist/vue-inbox.ssr.js",
+  "browser": "dist/vue-inbox.esm.js",
+  "module": "dist/vue-inbox.esm.js",
+  "unpkg": "dist/vue-inbox.min.js",
   "files": [
     "dist/*",
     "src/**/*.vue"

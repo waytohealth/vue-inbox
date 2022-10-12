@@ -84,7 +84,7 @@ if (!argv.format || argv.format === 'es') {
     input: 'src/entry.esm.js',
     external,
     output: {
-      file: 'dist/waytohealth-inbox.esm.js',
+      file: 'dist/vue-inbox.esm.js',
       format: 'esm',
       exports: 'named',
     },
@@ -116,9 +116,9 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: 'dist/waytohealth-inbox.ssr.js',
+      file: 'dist/vue-inbox.ssr.js',
       format: 'cjs',
-      name: 'WaytohealthInbox',
+      name: 'InboxComponent',
       exports: 'auto',
       globals,
     },
@@ -145,9 +145,9 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: 'dist/waytohealth-inbox.min.js',
+      file: 'dist/vue-inbox.min.js',
       format: 'iife',
-      name: 'WaytohealthInbox',
+      name: 'InboxComponent',
       exports: 'auto',
       globals,
     },
