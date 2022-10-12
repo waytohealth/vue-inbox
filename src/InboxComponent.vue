@@ -1,25 +1,19 @@
 <template>
   <div>
     <h2>SMS Inbox</h2>
-    {{loading ? 'loading':'done'}}
-    <div v-if="!loading" id="inbox" style="min-height: 300px;border-style: solid;">
-      <span v-for="(msgs, date) in messagesByDate" :key="date">
-        <div class="date">{{formatDate(date)}}</div>
-        <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
-          <span class="time">{{messageTime(msg)}}</span>
-          {{msg.message_text}}
-        </div>
-      </span>
-    </div>
+    <InboxDisplay />
   </div>
 </template>
 
 <script>
 import {useMessageStore} from "./stores/message";
 import {useAuthStore} from "./stores/auth";
-import {mapState} from "pinia";
+import InboxDisplay from "./components/InboxDisplay";
 export default {
   name: "InboxComponent",
+  components: {
+    InboxDisplay
+  },
   props: {
     auth: {
       type: Object,
@@ -44,32 +38,6 @@ export default {
       required: true
     }
   },
-  computed: {
-    ...mapState(useMessageStore,  ['messages']),
-    sortedMessages() {
-      if (this.messages.length) {
-       let tmp = this.messages;
-       return tmp.sort(function(a,b) {
-        if ((a.sent_at || a.created_at) > (b.sent_at || b.created_at)) {
-          return 1;
-        } else if ((a.sent_at || a.created_at) < (b.sent_at || b.created_at)) {
-          return -1;
-        } 
-        return 0;
-       });
-      }
-      return [];
-    },
-    messagesByDate() {
-      if (this.sortedMessages.length) {
-        return this.sortedMessages.reduce(function(rv, x) {
-          (rv[x['created_at'].split(" ")[0]] = rv[x['created_at'].split(" ")[0]] || []).push(x);
-          return rv;
-        }, {});
-      }
-      return [];
-    },
-  },
   beforeMount() {
     const authStore = useAuthStore();
     const messageStore = useMessageStore();
@@ -80,33 +48,8 @@ export default {
     }
 
     messageStore.baseUrl = this.apiBaseUrl;
-  },
-  async mounted() {
-    const messageStore = useMessageStore();
-    this.loading = true;
-    messageStore.loadMessages(this.studyId, this.participantId)
-        .then(() => {
-          this.loading = false
-        }).catch((e) => {
-          // TODO: proper error handling
-          console.log(e);
-          this.loading = false;
-        });
-  },
-  methods: {
-    formatDate(date) {
-      // TODO: proper date formatting
-      return "~ " + date + " ~";
-    },
-    messageTime(msg) {
-      let datetime = msg.sent_at || msg.created_at;
-      return datetime.split(" ")[1];
-    }
-  },
-  data() {
-    return {
-      loading: false,
-    }
+    messageStore.participant = this.participantId;
+    messageStore.study = this.studyId;
   }
 }
 </script>

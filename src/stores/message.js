@@ -5,12 +5,13 @@ export const useMessageStore = defineStore('message', {
   state: () => {
     return {
       baseUrl: "http://localhost",
-      user: null,
+      participant: null,
+      study: null,
       messages: []
     }
   },
   actions: {
-    async loadMessages(study, participant) {
+    async loadMessages() {
       const authStore = useAuthStore();
       let auth = authStore.requestCredentials;
       console.log(auth)
@@ -19,8 +20,8 @@ export const useMessageStore = defineStore('message', {
       });
 
       let params = new URLSearchParams({
-        study_id: study,
-        participant_id: participant,
+        study_id: this.study,
+        participant_id: this.participant,
         order_by: 'desc(id)'
       })
       console.log(params);
