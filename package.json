@@ -5,8 +5,7 @@
   "module": "dist/inbox-component.esm.js",
   "unpkg": "dist/inbox-component.min.js",
   "files": [
-    "dist/*",
-    "src/**/*.vue"
+    "dist/*"
   ],
   "sideEffects": false,
   "scripts": {
@@ -58,5 +57,5 @@
     },
     "rules": {}
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
