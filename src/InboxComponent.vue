@@ -2,6 +2,7 @@
   <div>
     <h2>SMS Inbox</h2>
     <InboxDisplay />
+    <InboxInput />
   </div>
 </template>
 
@@ -9,9 +10,11 @@
 import {useMessageStore} from "./stores/message";
 import {useAuthStore} from "./stores/auth";
 import InboxDisplay from "./components/InboxDisplay";
+import InboxInput from "./components/InboxInput";
 export default {
   name: "InboxComponent",
   components: {
+    InboxInput,
     InboxDisplay
   },
   props: {

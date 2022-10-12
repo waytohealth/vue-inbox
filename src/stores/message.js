@@ -14,7 +14,6 @@ export const useMessageStore = defineStore('message', {
     async loadMessages() {
       const authStore = useAuthStore();
       let auth = authStore.requestCredentials;
-      console.log(auth)
       let requestParams = Object.assign(auth, {
         method: "GET"
       });
@@ -32,6 +31,27 @@ export const useMessageStore = defineStore('message', {
       }
 
       this.messages = (await res.json()).data;
+    },
+    async sendMessage(message) {
+      const authStore = useAuthStore();
+
+      let body = {
+        message_text: message
+      }
+
+      let auth = authStore.requestCredentials;
+      let requestParams = Object.assign(auth, {
+        method: "POST",
+        body: JSON.stringify(body)
+      });
+
+
+      let res = await fetch(`${this.baseUrl}/api/v2/participants/${this.participant}/text_messages`, requestParams);
+      if (!res.ok) {
+        throw new Error("womp");
+      }
+      let text = (await res.json()).data;
+      this.messages.push(text);
     }
   }
 })
