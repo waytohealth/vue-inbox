@@ -52,7 +52,7 @@ export default {
       return [];
     },
   },
-  async mounted() {
+  async created() {
     this.loading = true;
     this.store.loadMessages()
         .then(() => {
