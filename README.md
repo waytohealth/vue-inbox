@@ -30,7 +30,7 @@ If an API Key is being used, it should have authorization scopes for the followi
 1. [getTextMessages](https://app.waytohealth.org/api/v2#operation/getTextMessages)
 2. [createTextMessageForParticipant](https://app.waytohealth.org/api/v2/participants/{participant_id}/text_messages)
 
-If session auth is being used, the component will expect a valid session cookie, using the `{credentials: "include"}` setting on `fetch`
+If session auth is being used, the component will expect a valid session cookie, using the [{credentials: "include"}](https://developer.mozilla.org/en-US/docs/Web/API/fetch#credentials) setting on `fetch`
 ## apiBaseUrl
 
 This required property is the API base for a given environment.
