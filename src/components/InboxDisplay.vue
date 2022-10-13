@@ -1,7 +1,7 @@
 <template>
   <div>
     {{loading ? 'loading':'done'}}
-    <div v-if="!loading" id="inbox" style="min-height: 300px;border-style: solid;">
+    <div v-if="!loading" id="inbox" style="min-height: 300px;">
       <span v-for="(msgs, date) in messagesByDate" :key="date">
         <div class="date">{{formatDate(date)}}</div>
         <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
@@ -18,6 +18,10 @@ export default {
   name: "InboxDisplay",
   props: {
     store: {
+      type:Object,
+      required: true
+    },
+    styleConfig: {
       type:Object,
       required: true
     }
@@ -78,6 +82,9 @@ export default {
 </script>
 
 <style scoped>
+#inbox {
+  border: 5px solid blue;
+}
 .date {
   clear: both;
   font-size: 1.1em;

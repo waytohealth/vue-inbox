@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h2>SMS Inbox</h2>
-    <InboxDisplay :store="store"/>
-    <InboxInput :store="store"/>
+    <InboxDisplay :store="store" :styleConfig="styleConfig"/>
+    <InboxInput :store="store" :styleConfig="styleConfig"/>
   </div>
 </template>
 
@@ -10,6 +9,7 @@
 import InboxDisplay from "./components/InboxDisplay";
 import InboxInput from "./components/InboxInput";
 import store from './stores/inbox'
+import styles from './stores/styles'
 
 export default {
   name: "InboxComponent",
@@ -20,7 +20,7 @@ export default {
   props: {
     auth: {
       type: Object,
-      required: true,
+      required: false,
       default() {
         return {
           method: "session",
@@ -39,10 +39,15 @@ export default {
     participantId: {
       type: Number,
       required: true
+    },
+    styles: {
+      type: Object,
+      required: false
     }
   },
   data() {
     return {
+      styleConfig: Object.assign(styles, this.styles),
       store: store
     }
   },

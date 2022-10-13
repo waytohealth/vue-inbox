@@ -1,7 +1,7 @@
 <template>
   <div>
     <textarea rows="4" cols="30" class="form-control" v-model="textContent"></textarea>
-    <input type="submit" value="Send SMS Message" class="btn btn-primary" v-on:click="sendMessage">
+    <input type="submit" value="Send SMS Message" :class="styleConfig.inboxSubmit" v-on:click="sendMessage">
   </div>
 </template>
 
@@ -10,6 +10,10 @@ export default {
   name: "InboxInput",
   props: {
     store: {
+      type:Object,
+      required: true
+    },
+    styleConfig: {
       type:Object,
       required: true
     }
@@ -52,33 +56,5 @@ export default {
 }
 textarea.form-control {
   height: auto;
-}
-
-.btn {
-  display: inline-block;
-  padding: 6px 12px;
-  margin-bottom: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.42857143;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #01256e;
-  border-color: #011c55;
 }
 </style>
