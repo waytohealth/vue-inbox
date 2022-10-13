@@ -1,7 +1,7 @@
 <template>
   <div>
     {{loading ? 'loading':'done'}}
-    <div v-if="!loading" id="inbox" style="min-height: 300px;">
+    <div class="inbox" style="min-height: 300px;">
       <span v-for="(msgs, date) in messagesByDate" :key="date">
         <div class="date">{{formatDate(date)}}</div>
         <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
@@ -56,14 +56,31 @@ export default {
     this.loading = true;
     this.store.loadMessages()
         .then(() => {
-          this.loading = false
+          this.loading = false;
+          this.scrollToBottom();
         }).catch((e) => {
-      // TODO: proper error handling
-      console.log(e);
-      this.loading = false;
-    });
+          // TODO: proper error handling
+          console.log(e);
+          this.loading = false;
+        });
+  },
+  mounted() {
+    this.scrollToBottom();
   },
   methods: {
+    scrollToBottom(force) {
+      if (!this.scrolled || force) {
+        let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;
+        if (lastMessage) {
+          console.log("Scrolling");
+          console.log(lastMessage);
+          lastMessage.scrollIntoView();
+          this.scrolled = true;
+        } else {
+          console.log("Failed to find last element");
+        }
+      }
+    },
     formatDate(date) {
       // TODO: proper date formatting
       return "~ " + date + " ~";
@@ -75,6 +92,7 @@ export default {
   },
   data() {
     return {
+      scrolled: false,
       loading: false,
     }
   }
@@ -82,8 +100,11 @@ export default {
 </script>
 
 <style scoped>
-#inbox {
-  border: 5px solid blue;
+.inbox {
+  height: 70vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border-bottom: 2px solid rgba(0,0,0,.2);
 }
 .date {
   clear: both;
