@@ -3,12 +3,41 @@
     <div>
       <div class="inbox" style="min-height: 300px;">
       <span v-for="(msgs, date) in messagesByDate" :key="date">
-        <div class="date">{{formatDate(date)}}</div>
+        <div class="date">{{inboxHelper.formatDate(date)}}</div>
         <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
-          <span class="time">{{messageTime(msg)}}</span>
-            <b-icon v-if="statusType(msg.status) == 'success'" class="status-icon"  icon="check-lg" variant="success"></b-icon>
-            <b-icon v-if="statusType(msg.status) == 'failure'" class="status-icon"  icon="exclamation-triangle-fill" variant="danger"></b-icon>
-            <b-icon v-if="statusType(msg.status) == 'unknown'" class="status-icon"  icon="info-circle-fill" variant="info"></b-icon>
+          <span class="time">{{ inboxHelper.messageTime(msg) }}</span>
+          <a href="#" :id="'icon-'+msg.id">
+            <b-icon
+                v-if="inboxHelper.statusType(msg) == 'success'"
+                class="status-icon"
+                icon="check-lg"
+                variant="success">
+            </b-icon>
+            <b-icon
+                v-if="inboxHelper.statusType(msg) == 'failure'"
+                class="status-icon"
+                icon="exclamation-triangle-fill"
+                variant="danger">
+            </b-icon>
+            <b-icon
+                v-if="inboxHelper.statusType(msg) == 'unknown'"
+                class="status-icon"
+                icon="info-circle-fill"
+                variant="info">
+            </b-icon>
+          </a>
+          <b-popover
+              :target="'icon-'+msg.id"
+              title="Text Message Details"
+              triggers="click blur"
+              :placement="msg.direction == 'inbound' ? 'right' : 'left'"
+          >
+            <template #title>Text Message Details</template>
+            <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br/>
+            <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br/>
+            <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
+            <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+          </b-popover>
           {{msg.message_text}}
         </div>
       </span>
@@ -24,9 +53,9 @@
 
 <script>
 
-import store from './stores/inbox'
-import styles from './stores/styles'
-import dayjs from 'dayjs';
+import store from './stores/inbox';
+import styles from './stores/styles';
+import inboxHelper from './helpers/inbox';
 
 export default {
   name: "InboxComponent",
@@ -63,11 +92,9 @@ export default {
       scrolled: false,
       styleConfig: Object.assign(styles, this.styles),
       store: store,
+      inboxHelper: inboxHelper,
       textContent: ""
     }
-  },
-  beforeMount() {
-
   },
   async created() {
     this.store.apiBaseUrl = this.apiBaseUrl;
@@ -81,10 +108,10 @@ export default {
           this.loading = false;
           this.scrollToBottom();
         }).catch((e) => {
-      // TODO: proper error handling
-      console.log(e);
-      this.loading = false;
-    });
+          // TODO: proper error handling
+          console.log(e);
+          this.loading = false;
+        });
   },
   mounted() {
     this.scrollToBottom();
@@ -92,16 +119,7 @@ export default {
   computed: {
     sortedMessages() {
       if (this.store.messages?.length) {
-        let tmp = this.store.messages;
-        return tmp.sort(function(a,b) {
-          if ((a.sent_at || a.created_at) > (b.sent_at || b.created_at)) {
-            return 1;
-          } else if ((a.sent_at || a.created_at) < (b.sent_at || b.created_at)) {
-            return -1;
-          }
-
-          return a.id > b.id ? 1:-1;
-        });
+        return this.inboxHelper.sortMessages(this.store.messages)
       }
       return [];
     },
@@ -127,32 +145,6 @@ export default {
         } else {
           console.log("Failed to find last element");
         }
-      }
-    },
-    formatDate(date) {
-      return dayjs(date).format('~ dddd, D MMMM YYYY ~');
-    },
-    messageTime(msg) {
-      let datetime = msg.sent_at || msg.created_at;
-      return dayjs(datetime).format('h:m A');
-    },
-    statusType(status) {
-      switch (status) {
-        case 'delivered':
-        case 'completed':
-        case 'sent':
-        case 'received':
-          return 'success';
-        case 'failed':
-        case 'undelivered':
-          return 'failure';
-        case 'queued':
-        case 'pending':
-        case 'unknown':
-        case 'accepted':
-        case 'in-progress':
-        default:
-          return 'unknown';
       }
     },
     async sendMessage() {
