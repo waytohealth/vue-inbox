@@ -24,9 +24,13 @@ let helper = {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).format('h:m A');
   },
+  tooltipTime: function(msg) {
+    let datetime = msg.sent_at || msg.created_at;
+    return dayjs(datetime).format('h:m:ss A');
+  },
   messageDetailTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('m/d/YY h:m:s A');
+    return dayjs(datetime).format('m/d/YY h:m:ss A');
   },
   formatDate: function(date) {
     return dayjs(date).format('~ dddd, D MMMM YYYY ~');

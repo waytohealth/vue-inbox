@@ -5,7 +5,7 @@
       <span v-for="(msgs, date) in messagesByDate" :key="date">
         <div class="date">{{inboxHelper.formatDate(date)}}</div>
         <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
-          <span class="time">{{ inboxHelper.messageTime(msg) }}</span>
+          <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
           <a href="#" :id="'icon-'+msg.id">
             <b-icon
                 v-if="inboxHelper.statusType(msg) == 'success'"
