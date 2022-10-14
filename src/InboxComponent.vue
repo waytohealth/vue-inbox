@@ -23,6 +23,7 @@
 
 import store from './stores/inbox'
 import styles from './stores/styles'
+import dayjs from 'dayjs';
 
 export default {
   name: "InboxComponent",
@@ -126,12 +127,11 @@ export default {
       }
     },
     formatDate(date) {
-      // TODO: proper date formatting
-      return "~ " + date + " ~";
+      return dayjs(date).format('~ dddd, D MMMM YYYY ~');
     },
     messageTime(msg) {
       let datetime = msg.sent_at || msg.created_at;
-      return datetime.split(" ")[1];
+      return dayjs(datetime).format('h:m A');
     },
     async sendMessage() {
       if (this.textContent.length) {
@@ -208,29 +208,5 @@ export default {
   float: right;
   margin: 0 3px 0;
   color: gray;
-}
-
-
-
-.form-control {
-  display: block;
-  width: 100%;
-  height: 34px;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857143;
-  color: #6c6f76;
-  background-color: #fff;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-}
-textarea.form-control {
-  height: auto;
 }
 </style>
