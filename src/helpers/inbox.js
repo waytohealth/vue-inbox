@@ -30,7 +30,7 @@ let helper = {
   },
   messageDetailTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('m/d/YY h:m:ss A');
+    return dayjs(datetime).format('M/D/YY h:mm:ss A');
   },
   formatDate: function(date) {
     return dayjs(date).format('~ dddd, D MMMM YYYY ~');
@@ -41,6 +41,8 @@ let helper = {
     var match = cleaned.match(/^\d{1}(\d{3})(\d{3})(\d{4})$/);
     if (match) {
       return match[1] + '-' + match[2] + '-' + match[3];
+    } else {
+      return number;
     }
   },
   messageStatus: function(msg) {
