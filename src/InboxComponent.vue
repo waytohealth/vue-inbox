@@ -39,6 +39,11 @@
             <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
           </b-popover>
           {{msg.message_text}}
+          <ul v-if="msg.media.length > 0" class="list-inline">
+            <li v-for="(media, index) in msg.media" :key="media.sid">
+              <img class="inbox-img" :src="getImageUrl(msg, index)"/>
+            </li>
+          </ul>
         </div>
       </span>
       </div>
@@ -153,6 +158,9 @@ export default {
         this.scrollToBottom(true);
         this.textContent = "";
       }
+    },
+    getImageUrl(msg, imageIndex) {
+      return this.store.apiBaseUrl + "/admin/study/" + this.studyId + "/textMessage/" + msg.id + "/image/" + imageIndex;
     }
   }
 }
@@ -222,5 +230,15 @@ export default {
   float: right;
   margin: 0 3px 0;
   color: gray;
+}
+.inbox-img {
+    width: 200px;
+    height: 200px;
+    margin: 20px 0;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    -webkit-background-size: cover;
+    background-size: cover;
 }
 </style>
