@@ -6,6 +6,9 @@
         <div class="date">{{formatDate(date)}}</div>
         <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
           <span class="time">{{messageTime(msg)}}</span>
+            <b-icon v-if="statusType(msg.status) == 'success'" class="status-icon"  icon="check-lg" variant="success"></b-icon>
+            <b-icon v-if="statusType(msg.status) == 'failure'" class="status-icon"  icon="exclamation-triangle-fill" variant="danger"></b-icon>
+            <b-icon v-if="statusType(msg.status) == 'unknown'" class="status-icon"  icon="info-circle-fill" variant="info"></b-icon>
           {{msg.message_text}}
         </div>
       </span>
@@ -132,6 +135,25 @@ export default {
     messageTime(msg) {
       let datetime = msg.sent_at || msg.created_at;
       return dayjs(datetime).format('h:m A');
+    },
+    statusType(status) {
+      switch (status) {
+        case 'delivered':
+        case 'completed':
+        case 'sent':
+        case 'received':
+          return 'success';
+        case 'failed':
+        case 'undelivered':
+          return 'failure';
+        case 'queued':
+        case 'pending':
+        case 'unknown':
+        case 'accepted':
+        case 'in-progress':
+        default:
+          return 'unknown';
+      }
     },
     async sendMessage() {
       if (this.textContent.length) {
