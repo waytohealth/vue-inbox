@@ -22,11 +22,11 @@ let helper = {
   },
   messageTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('h:m A');
+    return dayjs(datetime).format('h:mm A');
   },
   tooltipTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('h:m:ss A');
+    return dayjs(datetime).format('h:mm:ss A');
   },
   messageDetailTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
