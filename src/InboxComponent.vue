@@ -139,6 +139,15 @@ export default {
       return [];
     },
   },
+  watch: {
+    sortedMessages(newObj, oldObj) {
+      if (newObj.length > oldObj.length) {
+        this.$nextTick(() => {
+          this.scrollToBottom(true);
+        });
+      }
+    },
+  },
   methods: {
     scrollToBottom(force) {
       if (!this.scrolled || force) {
