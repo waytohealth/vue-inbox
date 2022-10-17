@@ -120,11 +120,12 @@ export default {
   },
   mounted() {
     this.scrollToBottom();
+    this.poll();
   },
   computed: {
     sortedMessages() {
-      if (this.store.messages?.length) {
-        return this.inboxHelper.sortMessages(this.store.messages)
+      if (Object.keys(this.store.messagesObj).length > 0) {
+        return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
       }
       return [];
     },
@@ -161,8 +162,14 @@ export default {
     },
     getImageUrl(msg, imageIndex) {
       return this.store.apiBaseUrl + "/admin/study/" + this.studyId + "/textMessage/" + msg.id + "/image/" + imageIndex;
+    },
+    poll() {
+      setTimeout(() => {
+        this.store.poll();
+        this.poll()
+      }, 10000)
     }
-  }
+  },
 }
 </script>
 

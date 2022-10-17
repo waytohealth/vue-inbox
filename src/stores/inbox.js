@@ -1,11 +1,16 @@
 let appState = {
   messages: [],
+  messagesObj: {},
   apiBaseUrl: null,
   participantId: null,
   studyId: null,
   auth: {
     method: "session",
     apiKey: ""
+  },
+  meta: {
+    lastUpdated: null,
+    oldest: null
   },
   authCredentials() {
     if (this.auth.method === 'session') {
@@ -31,7 +36,6 @@ let appState = {
       participant_id: this.participantId,
       order_by: 'desc(id)'
     })
-    console.log(this);
     let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+params, requestParams);
 
     if (!res.ok) {
@@ -39,6 +43,10 @@ let appState = {
     }
 
     this.messages = (await res.json()).data;
+
+    this.messagesObj = this.messages.reduce((accumulator, text) => {
+      return {...accumulator, [text.id]: text};
+    }, {});
   },
   async sendMessage(message) {
     let body = {
@@ -57,6 +65,30 @@ let appState = {
     }
     let text = (await res.json()).data;
     this.messages.push(text);
+    this.messagesObj[text.id] = text;
+  },
+  async poll() {
+    console.log("polling");
+
+    let auth = this.authCredentials();
+    let requestParams = Object.assign(auth, {
+      method: "GET"
+    });
+
+    let params = new URLSearchParams({
+      study_id: this.studyId,
+      participant_id: this.participantId,
+      updated_at: 'after(' + '2022-10-17 11:52:00' + ')',
+      order_by: 'desc(id)'
+    })
+    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+params, requestParams);
+
+    if (!res.ok) {
+      throw new Error("womp");
+    }
+
+    let messages = (await res.json()).data;
+    messages.forEach((message) => {this.messagesObj[message.id] = message});
   }
 };
 

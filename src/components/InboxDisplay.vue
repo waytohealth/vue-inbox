@@ -28,8 +28,8 @@ export default {
   },
   computed: {
     sortedMessages() {
-      if (this.store.messages?.length) {
-        let tmp = this.store.messages;
+      if (Object.keys($vm0.store.messagesObj).length > 0) {
+        let tmp = Object.values(this.store.messagesObj);
         return tmp.sort(function(a,b) {
           if ((a.sent_at || a.created_at) > (b.sent_at || b.created_at)) {
             return 1;
