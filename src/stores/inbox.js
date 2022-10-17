@@ -1,5 +1,6 @@
+import dayjs from 'dayjs';
+
 let appState = {
-  messages: [],
   messagesObj: {},
   apiBaseUrl: null,
   participantId: null,
@@ -25,28 +26,48 @@ let appState = {
       }
     }
   },
-  async loadMessages() {
+  async fetchMessages(params) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
       method: "GET"
     });
 
-    let params = new URLSearchParams({
+    let search = new URLSearchParams(Object.assign({
       study_id: this.studyId,
       participant_id: this.participantId,
       order_by: 'desc(id)'
-    })
-    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+params, requestParams);
+    }, params));
+
+    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+search, requestParams);
 
     if (!res.ok) {
       throw new Error("womp");
     }
 
-    this.messages = (await res.json()).data;
+    this.meta.lastUpdated = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    return (await res.json()).data;
+  },
 
-    this.messagesObj = this.messages.reduce((accumulator, text) => {
+  async loadMessages() {
+    let messages = await this.fetchMessages();
+    this.messagesObj = messages.reduce((accumulator, text) => {
       return {...accumulator, [text.id]: text};
     }, {});
+  },
+  async poll() {
+    console.log("polling");
+
+    let params = {
+      updated_at: 'after(' + this.meta.lastUpdated + ')',
+    };
+
+    let messages = await this.fetchMessages(params);
+    if (messages.length) {
+      let newMessages = messages.reduce((accumulator, text) => {
+        return {...accumulator, [text.id]: text};
+      }, {});
+      this.messagesObj = Object.assign({}, this.messagesObj, newMessages)
+    }
   },
   async sendMessage(message) {
     let body = {
@@ -66,29 +87,6 @@ let appState = {
     let text = (await res.json()).data;
     this.messages.push(text);
     this.messagesObj[text.id] = text;
-  },
-  async poll() {
-    console.log("polling");
-
-    let auth = this.authCredentials();
-    let requestParams = Object.assign(auth, {
-      method: "GET"
-    });
-
-    let params = new URLSearchParams({
-      study_id: this.studyId,
-      participant_id: this.participantId,
-      updated_at: 'after(' + '2022-10-17 11:52:00' + ')',
-      order_by: 'desc(id)'
-    })
-    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+params, requestParams);
-
-    if (!res.ok) {
-      throw new Error("womp");
-    }
-
-    let messages = (await res.json()).data;
-    messages.forEach((message) => {this.messagesObj[message.id] = message});
   }
 };
 
