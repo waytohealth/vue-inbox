@@ -162,11 +162,12 @@ export default {
   },
   watch: {
     sortedMessages(newObj, oldObj) {
-      if (newObj.length > oldObj.length) {
+      if (newObj.length > oldObj.length && store.meta.updates) {
         this.$nextTick(() => {
           this.scrollToBottom(true);
         });
       }
+      store.meta.updates = false;
     },
   },
   methods: {

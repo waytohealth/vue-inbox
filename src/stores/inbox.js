@@ -11,6 +11,7 @@ let appState = {
   },
   meta: {
     lastUpdated: null,
+    updates: false,
     oldest: null,
     limit: 20
   },
@@ -68,6 +69,7 @@ let appState = {
       return {...accumulator, [text.id]: text};
     }, {});
     this.loading.initial = false;
+    this.meta.updates = true;
   },
   async poll() {
     if (this.loading.polling) {
@@ -91,6 +93,7 @@ let appState = {
       this.messagesObj = Object.assign({}, this.messagesObj, newMessages)
     }
     this.loading.polling = false;
+    this.meta.updates = true;
   },
   async loadOlder() {
     if (this.loading.older) {
@@ -135,6 +138,7 @@ let appState = {
     let text = (await res.json()).data;
     this.messagesObj[text.id] = text;
     this.loading.send = false;
+    this.meta.updates = true;
   }
 };
 
