@@ -1,57 +1,77 @@
 <template>
   <div>
     <div>
+      {{sortedMessages.length}}
+      {{store.loading}}
       <div class="inbox" style="min-height: 300px;">
-      <span v-for="(msgs, date) in messagesByDate" :key="date">
-        <div class="date">{{inboxHelper.formatDate(date)}}</div>
-        <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
-          <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
-          <a href="#" :id="'icon-'+msg.id">
-            <b-icon
-                v-if="inboxHelper.statusType(msg) == 'success'"
-                class="status-icon"
-                icon="check-lg"
-                variant="success">
-            </b-icon>
-            <b-icon
-                v-if="inboxHelper.statusType(msg) == 'failure'"
-                class="status-icon"
-                icon="exclamation-triangle-fill"
-                variant="danger">
-            </b-icon>
-            <b-icon
-                v-if="inboxHelper.statusType(msg) == 'unknown'"
-                class="status-icon"
-                icon="info-circle-fill"
-                variant="info">
-            </b-icon>
-          </a>
-          <b-popover
-              :target="'icon-'+msg.id"
-              title="Text Message Details"
-              triggers="click blur"
-              :placement="msg.direction == 'inbound' ? 'right' : 'left'"
-          >
-            <template #title>Text Message Details</template>
-            <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br/>
-            <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br/>
-            <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
-            <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-          </b-popover>
-          {{msg.message_text}}
-          <ul v-if="msg.media.length > 0" class="list-inline">
-            <li v-for="(media, index) in msg.media" :key="media.sid">
-              <img class="inbox-img" :src="getImageUrl(msg, index)"/>
-            </li>
-          </ul>
-        </div>
-      </span>
+        <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
+        <span v-for="(msgs, date) in messagesByDate" :key="date">
+          <div class="date">{{inboxHelper.formatDate(date)}}</div>
+          <div v-for="msg in msgs" :key="msg.id" class="message" :class="[msg.direction == 'inbound' ? 'inbound' : 'outbound'] ">
+            <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
+            <a href="#" :id="'icon-'+msg.id">
+              <b-icon
+                  v-if="inboxHelper.statusType(msg) == 'success'"
+                  class="status-icon"
+                  icon="check-lg"
+                  variant="success">
+              </b-icon>
+              <b-icon
+                  v-if="inboxHelper.statusType(msg) == 'failure'"
+                  class="status-icon"
+                  icon="exclamation-triangle-fill"
+                  variant="danger">
+              </b-icon>
+              <b-icon
+                  v-if="inboxHelper.statusType(msg) == 'unknown'"
+                  class="status-icon"
+                  icon="info-circle-fill"
+                  variant="info">
+              </b-icon>
+            </a>
+            <b-popover
+                :target="'icon-'+msg.id"
+                title="Text Message Details"
+                triggers="click blur"
+                :placement="msg.direction == 'inbound' ? 'right' : 'left'"
+            >
+              <template #title>Text Message Details</template>
+              <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br/>
+              <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br/>
+              <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
+              <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+            </b-popover>
+            {{msg.id}}:
+            {{msg.message_text}}
+            <ul v-if="msg.media.length > 0" class="list-inline">
+              <li v-for="(media, index) in msg.media" :key="media.sid">
+                <img class="inbox-img" :src="getImageUrl(msg, index)"/>
+              </li>
+            </ul>
+          </div>
+        </span>
       </div>
     </div>
 
     <div>
-      <textarea rows="4" cols="30" class="form-control" v-model="textContent"></textarea>
-      <input type="submit" value="Send SMS Message" :class="styleConfig.inboxSubmit" v-on:click="sendMessage">
+      <textarea
+          rows="4"
+          cols="30"
+          class="form-control"
+          v-model="textContent"
+          :disabled="store.loading.send"
+      ></textarea>
+      <input
+          type="submit"
+          value="Send SMS Message"
+          :class="styleConfig.inboxSubmit"
+          v-on:click="sendMessage"
+          :disabled="store.loading.send"
+          v-if="!store.loading.send"
+      >
+      <div v-else :class="styleConfig.inboxSubmit" class="disabled">
+        Send SMS Message <b-spinner small variant="light" label="Spinning"></b-spinner>
+      </div>
     </div>
   </div>
 </template>
@@ -120,6 +140,7 @@ export default {
   },
   mounted() {
     this.scrollToBottom();
+    this.handleTop();
     this.poll();
   },
   computed: {
@@ -159,6 +180,20 @@ export default {
           this.scrolled = true;
         } else {
           console.log("Failed to find last element");
+        }
+      }
+    },
+    handleTop() {
+      let inboxDiv = this.$el?.querySelector('.inbox');
+      inboxDiv.onscroll =  () => {
+        // eslint-disable-next-line
+        if (inboxDiv) {
+          if (inboxDiv.scrollTop === 0) {
+            console.log('load older')
+            store.loadOlder();
+          } else {
+            console.log(inboxDiv.scrollTop);
+          }
         }
       }
     },
