@@ -1,8 +1,6 @@
 <template>
   <div>
     <div>
-      {{sortedMessages.length}}
-      {{store.loading}}
       <div class="inbox" style="min-height: 300px;">
         <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
         <span v-for="(msgs, date) in messagesByDate" :key="date">
@@ -175,8 +173,6 @@ export default {
       if (!this.scrolled || force) {
         let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;
         if (lastMessage) {
-          console.log("Scrolling");
-          console.log(lastMessage);
           lastMessage.scrollIntoView();
           this.scrolled = true;
         } else {
@@ -187,13 +183,9 @@ export default {
     handleTop() {
       let inboxDiv = this.$el?.querySelector('.inbox');
       inboxDiv.onscroll =  () => {
-        // eslint-disable-next-line
         if (inboxDiv) {
           if (inboxDiv.scrollTop === 0) {
-            console.log('load older')
             store.loadOlder();
-          } else {
-            console.log(inboxDiv.scrollTop);
           }
         }
       }
