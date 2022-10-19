@@ -198,7 +198,7 @@ export default {
       }
     },
     getImageUrl(msg, imageIndex) {
-      return this.store.apiBaseUrl + "/admin/study/" + this.studyId + "/textMessage/" + msg.id + "/image/" + imageIndex;
+      return this.store.apiBaseUrl + "/api/v2/text_messages/" + msg.id + "/image/" + imageIndex;
     },
     poll() {
       setTimeout(() => {
