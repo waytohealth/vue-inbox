@@ -136,7 +136,10 @@ let appState = {
       throw new Error("womp");
     }
     let text = (await res.json()).data;
-    this.messagesObj[text.id] = text;
+    let obj = {};
+    obj[text.id] = text;
+
+    this.messagesObj = Object.assign({}, this.messagesObj, obj);
     this.loading.send = false;
     this.meta.updates = true;
   }
