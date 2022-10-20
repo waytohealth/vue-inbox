@@ -1,7 +1,7 @@
 <template>
   <div class="component">
     <div>
-      <div class="inbox" style="max-height:60vh">
+      <div class="inbox">
         <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
         <span v-for="(msgs, date) in messagesByDate" :key="date">
           <div class="date">{{inboxHelper.formatDate(date)}}</div>
@@ -212,8 +212,11 @@ export default {
 <style scoped>
 .component {
   max-height: 55vh;
+  min-height: 55vh;
 }
 .inbox {
+  max-height:60vh;
+  min-height:60vh;
   overflow-x: hidden;
   overflow-y: scroll;
   border-bottom: 2px solid rgba(0,0,0,.2);

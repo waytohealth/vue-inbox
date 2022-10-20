@@ -54,7 +54,9 @@ let appState = {
     }
 
     if (update) {
-      this.meta.lastUpdated = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      // Our API call finds items updated after the lastUpdated, so if the lastUpdated matched the updated_at
+      // of a text we wouldn't get it. Move the search back by a second to account for that
+      this.meta.lastUpdated = dayjs().subtract(1, 'second').format('YYYY-MM-DD HH:mm:ss');
     }
     let messages = (await res.json()).data;
     if (messages.length) {
