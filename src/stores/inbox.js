@@ -34,7 +34,7 @@ let appState = {
       }
     }
   },
-  async fetchMessages(params) {
+  async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
       method: "GET"
@@ -53,7 +53,9 @@ let appState = {
       throw new Error("womp");
     }
 
-    this.meta.lastUpdated = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    if (update) {
+      this.meta.lastUpdated = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    }
     let messages = (await res.json()).data;
     if (messages.length) {
       let newMessages = messages.reduce((accumulator, text) => {
@@ -85,10 +87,10 @@ let appState = {
 
     this.loading.polling = true;
     let messages = await this.fetchMessages(params);
+    this.loading.polling = false;
     if (messages.length) {
       this.meta.updates = true;
     }
-    this.loading.polling = false;
   },
   async loadOlder() {
     if (this.loading.older) {
@@ -100,7 +102,7 @@ let appState = {
     };
 
     this.loading.older = true;
-    await this.fetchMessages(params);
+    await this.fetchMessages(params, false);
     this.loading.older = false;
   },
   async sendMessage(message) {
@@ -128,8 +130,8 @@ let appState = {
     obj[text.id] = text;
 
     this.messagesObj = Object.assign({}, this.messagesObj, obj);
-    this.loading.send = false;
     this.meta.updates = true;
+    this.loading.send = false;
   }
 };
 

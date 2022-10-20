@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="component">
     <div>
-      <div class="inbox" style="min-height: 300px;">
+      <div class="inbox" style="max-height:60vh">
         <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
         <span v-for="(msgs, date) in messagesByDate" :key="date">
           <div class="date">{{inboxHelper.formatDate(date)}}</div>
@@ -39,7 +39,6 @@
               <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
               <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
             </b-popover>
-            {{msg.id}}:
             {{msg.message_text}}
             <ul v-if="msg.media.length > 0" class="list-inline">
               <li v-for="(media, index) in msg.media" :key="media.sid">
@@ -53,7 +52,7 @@
 
     <div>
       <textarea
-          rows="4"
+          rows="1"
           cols="30"
           class="form-control"
           v-model="textContent"
@@ -211,8 +210,10 @@ export default {
 </script>
 
 <style scoped>
+.component {
+  max-height: 55vh;
+}
 .inbox {
-  height: 70vh;
   overflow-x: hidden;
   overflow-y: scroll;
   border-bottom: 2px solid rgba(0,0,0,.2);
