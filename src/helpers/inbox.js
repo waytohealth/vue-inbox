@@ -45,6 +45,12 @@ let helper = {
       return number;
     }
   },
+  messageClasses: function(msg) {
+    let classes = [];
+    classes.push(msg.direction == 'inbound' ? 'inbound' : 'outbound');
+    classes.push(msg.sender ? 'manual' : 'automated');
+    return classes;
+  },
   messageStatus: function(msg) {
     switch (msg.status) {
       case 'queued':
