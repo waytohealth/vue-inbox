@@ -44,8 +44,11 @@
               </b-popover>
               {{msg.message_text}}
               <ul v-if="msg.media.length > 0" class="list-inline">
-                <li v-for="(media, index) in msg.media" :key="media.sid">
-                  <img class="inbox-img" :src="getImageUrl(msg, index)"/>
+                <li v-for="(media, idx) in msg.media" :key="media.sid">
+                  <LazyImage
+                      :store="store"
+                      :url="getImageUrl(msg, idx)"
+                  />
                 </li>
               </ul>
             </div>
@@ -82,9 +85,12 @@
 import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
-
+import LazyImage from "./components/LazyImage";
 export default {
   name: "InboxComponent",
+  components: {
+    LazyImage
+  },
   props: {
     auth: {
       type: Object,
@@ -293,15 +299,5 @@ div.sender {
   float: right;
   margin: 0 3px 0;
   color: gray;
-}
-.inbox-img {
-    width: 200px;
-    height: 200px;
-    margin: 20px 0;
-    text-align: center;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    -webkit-background-size: cover;
-    background-size: cover;
 }
 </style>

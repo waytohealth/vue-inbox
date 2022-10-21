@@ -34,6 +34,16 @@ let appState = {
       }
     }
   },
+  async fetchImage(url) {
+    let auth = this.authCredentials();
+    let requestParams = Object.assign(auth, {
+      method: "GET"
+    });
+    let res = await fetch(url, requestParams);
+    let blob = await res.blob();
+
+    return URL.createObjectURL(blob);
+  },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
