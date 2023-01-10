@@ -1,8 +1,8 @@
 {
   "name": "@waytohealth/inbox-component",
-  "main": "dist/inbox-component.ssr.js",
-  "browser": "dist/inbox-component.esm.js",
-  "module": "dist/inbox-component.esm.js",
+  "main": "src/entry.js",
+  "browser": "src/entry.js",
+  "module": "src/entry.js",
   "unpkg": "dist/inbox-component.min.js",
   "files": [
     "dist/*"

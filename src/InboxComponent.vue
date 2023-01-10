@@ -82,10 +82,10 @@
 
 <script>
 
-import store from './stores/inbox';
-import styles from './stores/styles';
-import inboxHelper from './helpers/inbox';
-import LazyImage from "./components/LazyImage";
+import store from './stores/inbox.js';
+import styles from './stores/styles.js';
+import inboxHelper from './helpers/inbox.js';
+import LazyImage from "./components/LazyImage.vue";
 export default {
   name: "InboxComponent",
   components: {
