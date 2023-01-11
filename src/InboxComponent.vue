@@ -2,46 +2,22 @@
   <div class="component">
     <div>
       <div class="inbox">
-        <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
+        <spinner size="lg" :fixed="false" :value="store.loading.older || store.loading.initial"></spinner>
         <span v-for="(msgs, date) in messagesByDate" :key="date">
           <div class="date">{{inboxHelper.formatDate(date)}}</div>
 
           <span v-for="msg in msgs" :key="msg.id">
             <div v-if="msg.sender" class="sender">{{msg.sender}}</div>
             <div  class="message" :class="inboxHelper.messageClasses(msg)">
-              <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
-              <a href="#" :id="'icon-'+msg.id">
-                <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'success'"
-                    class="status-icon"
-                    icon="check-lg"
-                    variant="success">
-                </b-icon>
-                <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'failure'"
-                    class="status-icon"
-                    icon="exclamation-triangle-fill"
-                    variant="danger">
-                </b-icon>
-                <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'unknown'"
-                    class="status-icon"
-                    icon="info-circle-fill"
-                    variant="info">
-                </b-icon>
-              </a>
-              <b-popover
-                  :target="'icon-'+msg.id"
-                  title="Text Message Details"
-                  triggers="click blur"
-                  :placement="msg.direction == 'inbound' ? 'right' : 'left'"
-              >
-                <template #title>Text Message Details</template>
-                <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br/>
-                <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br/>
-                <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
-                <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-              </b-popover>
+              <tooltip :content="inboxHelper.tooltipTime(msg)">
+                <span class="time">{{ inboxHelper.messageTime(msg) }}</span>
+              </tooltip>
+              <popover :placement="msg.direction == 'inbound' ? 'right' : 'left'" title="Text message details" :content="`<strong>From:</strong> ${inboxHelper.formatNumber(msg.from_number)}<br>
+                  <strong>To:</strong> ${inboxHelper.formatNumber(msg.to_number)}<br/>
+                  <strong>Status:</strong> ${inboxHelper.messageStatus(msg)}<br/>
+                  <strong>Sent:</strong> ${inboxHelper.messageDetailTime(msg)}`">
+                <span class="status-icon glyphicon" :class="getIconForStatus(inboxHelper.statusType(msg))" ></span>
+              </popover>
               {{msg.message_text}}
               <ul v-if="msg.media.length > 0" class="list-inline">
                 <li v-for="(media, idx) in msg.media" :key="media.sid">
@@ -82,6 +58,7 @@
 
 <script>
 
+import { spinner, popover, tooltip } from '@waytohealth/vue2-strap3';
 import store from './stores/inbox.js';
 import styles from './stores/styles.js';
 import inboxHelper from './helpers/inbox.js';
@@ -89,7 +66,10 @@ import LazyImage from "./components/LazyImage.vue";
 export default {
   name: "InboxComponent",
   components: {
-    LazyImage
+    LazyImage,
+    spinner,
+    popover,
+    tooltip
   },
   props: {
     auth: {
@@ -178,6 +158,16 @@ export default {
     },
   },
   methods: {
+    getIconForStatus(status) {
+      switch (status) {
+        case "success":
+          return "glyphicon-ok text-success";
+        case "failure":
+          return "glyphicon-warning-sign text-danger";
+        case "unknown":
+          return "glyphicon-info-sign text-info";
+      }
+    },
     scrollToBottom(force) {
       if (!this.scrolled || force) {
         let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;

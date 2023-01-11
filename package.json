@@ -17,6 +17,7 @@
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
   "dependencies": {
+    "@waytohealth/vue2-strap3": "^2.3.1",
     "dayjs": "^1.11.4",
     "vue": "2.6"
   },
