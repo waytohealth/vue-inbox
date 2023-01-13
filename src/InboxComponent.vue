@@ -210,10 +210,6 @@ export default {
 </script>
 
 <style scoped>
-.component {
-  max-height: 55vh;
-  min-height: 55vh;
-}
 .inbox {
   max-height:60vh;
   min-height:60vh;
