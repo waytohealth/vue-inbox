@@ -10,28 +10,14 @@
             <div v-if="msg.sender" class="sender">{{msg.sender}}</div>
             <div  class="message" :class="inboxHelper.messageClasses(msg)">
               <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
-              <a href="#" :id="'icon-'+msg.id">
                 <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'success'"
                     class="status-icon"
-                    icon="check-lg"
-                    variant="success">
-                </b-icon>
-                <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'failure'"
-                    class="status-icon"
-                    icon="exclamation-triangle-fill"
-                    variant="danger">
-                </b-icon>
-                <b-icon
-                    v-if="inboxHelper.statusType(msg) == 'unknown'"
-                    class="status-icon"
-                    icon="info-circle-fill"
-                    variant="info">
-                </b-icon>
-              </a>
+                    :id="`icon-${msg.id}`"
+                    :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
+                    :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
+                />
               <b-popover
-                  :target="'icon-'+msg.id"
+                  :target="`icon-${msg.id}`"
                   title="Text Message Details"
                   triggers="click blur"
                   :placement="msg.direction == 'inbound' ? 'right' : 'left'"
@@ -214,6 +200,25 @@ export default {
         this.store.poll();
         this.poll()
       }, 10000)
+    },
+    getIconForStatus(status) {
+      switch (status) {
+        case "success":
+          return {
+            icon: 'check-lg',
+            variant: 'success',
+          }
+        case "failure":
+          return {
+            icon: 'exclamation-triangle-fill',
+            variant: 'danger',
+          }
+        case "unknown":
+          return {
+            icon: 'info-circle-fill',
+            variant: 'info',
+          }
+      }
     }
   },
 }
@@ -299,5 +304,8 @@ div.sender {
   float: right;
   margin: 0 3px 0;
   color: gray;
+}
+.status-icon {
+  cursor: pointer;
 }
 </style>
