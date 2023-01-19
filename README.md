@@ -53,3 +53,10 @@ It should be an object with any of the following keys. Below are the default val
   "inboxSubmit": "btn px-4 btn-primary"
 }
 ```
+
+# Development
+If you want to hack on this repo while having your changes show up quickly within w2h core (or some other UI), here's a workflow to make that happen:
+1. Within this repo, run `yarn link`
+2. Within the main app (e.g. w2h core), run `yarn link @waytohealth/inbox-component`. That will make `./node_modules/@waytohealth/inbox-component` a symlink to this repo.
+    * You may need to restart webpack dev server after doing this.
+3. Set up a File Watcher in your IDE to run `yarn build` after each modification. (This will make sure that changes make their way into `dist/` and not just `src/`).
