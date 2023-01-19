@@ -45,11 +45,12 @@
 
     <div>
       <textarea
-          rows="1"
+          rows="2"
           cols="30"
           class="form-control"
           v-model="textContent"
           :disabled="store.loading.send"
+          @input="resizeTextarea"
       ></textarea>
       <input
           type="submit"
@@ -164,6 +165,10 @@ export default {
     },
   },
   methods: {
+    resizeTextarea(event) {
+      event.target.style.height = "auto";
+      event.target.style.height = `${event.target.scrollHeight}px`;
+    },
     scrollToBottom(force) {
       if (!this.scrolled || force) {
         let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;
@@ -225,10 +230,6 @@ export default {
 </script>
 
 <style scoped>
-.component {
-  max-height: 55vh;
-  min-height: 55vh;
-}
 .inbox {
   max-height:60vh;
   min-height:60vh;
@@ -307,5 +308,8 @@ div.sender {
 }
 .status-icon {
   cursor: pointer;
+}
+textarea {
+  resize: none;
 }
 </style>
