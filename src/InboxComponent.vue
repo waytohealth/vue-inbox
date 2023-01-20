@@ -2,66 +2,86 @@
   <div class="component">
     <div>
       <div class="inbox">
-        <div v-if="store.loading.older" class="text-center"><b-spinner variant="primary" label="Spinning"></b-spinner></div>
-        <span v-for="(msgs, date) in messagesByDate" :key="date">
-          <div class="date">{{inboxHelper.formatDate(date)}}</div>
+        <div v-if="store.loading.older" class="text-center">
+          <b-spinner variant="primary" label="Spinning" />
+        </div>
+        <div v-for="(msgs, date) in messagesByDate" :key="date">
+          <div class="date">
+            {{ inboxHelper.formatDate(date) }}
+          </div>
 
-          <span v-for="msg in msgs" :key="msg.id">
-            <div v-if="msg.sender" class="sender">{{msg.sender}}</div>
-            <div  class="message" :class="inboxHelper.messageClasses(msg)">
-              <span class="time" v-b-tooltip.hover :title="inboxHelper.tooltipTime(msg)">{{ inboxHelper.messageTime(msg) }}</span>
-                <b-icon
-                    class="status-icon"
-                    :id="`icon-${msg.id}`"
-                    :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
-                    :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
-                />
+          <div v-for="msg in msgs" :key="msg.id">
+            <div v-if="msg.sender" class="sender">
+              {{ msg.sender }}
+            </div>
+            <div class="message" :class="inboxHelper.messageClasses(msg)">
+              <span
+                v-b-tooltip.hover
+                class="time"
+                :title="inboxHelper.tooltipTime(msg)"
+              >{{ inboxHelper.messageTime(msg) }}</span>
+              <b-icon
+                :id="`icon-${msg.id}`"
+                class="status-icon"
+                :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
+                :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
+              />
               <b-popover
-                  :target="`icon-${msg.id}`"
-                  title="Text Message Details"
-                  triggers="click blur"
-                  :placement="msg.direction == 'inbound' ? 'right' : 'left'"
+                :target="`icon-${msg.id}`"
+                title="Text Message Details"
+                triggers="click blur"
+                :placement="msg.direction === 'inbound' ? 'right' : 'left'"
               >
-                <template #title>Text Message Details</template>
-                <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br/>
-                <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br/>
-                <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br/>
+                <template #title>
+                  Text Message Details
+                </template>
+                <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
+                <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
+                <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
                 <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
               </b-popover>
-              {{msg.message_text}}
+              {{ msg.message_text }}
               <ul v-if="msg.media.length > 0" class="list-inline">
                 <li v-for="(media, idx) in msg.media" :key="media.sid">
                   <LazyImage
-                      :store="store"
-                      :url="getImageUrl(msg, idx)"
+                    :store="store"
+                    :url="getImageUrl(msg, idx)"
                   />
                 </li>
               </ul>
             </div>
-          </span>
-        </span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div>
       <textarea
-          rows="2"
-          cols="30"
-          class="form-control"
-          v-model="textContent"
-          :disabled="store.loading.send"
-          @input="resizeTextarea"
-      ></textarea>
+        v-model="textContent"
+        rows="2"
+        cols="30"
+        class="form-control"
+        :disabled="store.loading.send"
+        @input="resizeTextarea"
+      />
       <input
-          type="submit"
-          value="Send SMS Message"
-          :class="styleConfig.inboxSubmit"
-          v-on:click="sendMessage"
-          :disabled="store.loading.send"
-          v-if="!store.loading.send"
+        v-if="!store.loading.send"
+        type="submit"
+        value="Send SMS Message"
+        :class="styleConfig.inboxSubmit"
+        :disabled="store.loading.send"
+        @click="sendMessage"
       >
-      <div v-else :class="styleConfig.inboxSubmit" class="disabled">
-        Send SMS Message <b-spinner small variant="light" label="Spinning"></b-spinner>
+      <div
+        v-else
+        :class="styleConfig.inboxSubmit"
+        class="disabled"
+      >
+        Send SMS Message <b-spinner
+          small
+          variant="light"
+          label="Spinning"
+        />
       </div>
     </div>
   </div>
@@ -103,7 +123,10 @@ export default {
     },
     styles: {
       type: Object,
-      required: false
+      required: false,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -114,28 +137,6 @@ export default {
       inboxHelper: inboxHelper,
       textContent: ""
     }
-  },
-  async created() {
-    this.store.apiBaseUrl = this.apiBaseUrl;
-    this.store.participantId = this.participantId;
-    this.store.studyId = this.studyId;
-    this.store.auth = this.auth;
-
-    this.loading = true;
-    this.store.loadMessages()
-        .then(() => {
-          this.loading = false;
-          this.scrollToBottom();
-        }).catch((e) => {
-          // TODO: proper error handling
-          console.log(e);
-          this.loading = false;
-        });
-  },
-  mounted() {
-    this.scrollToBottom();
-    this.handleTop();
-    this.poll();
   },
   computed: {
     sortedMessages() {
@@ -163,6 +164,28 @@ export default {
       }
       store.meta.updates = false;
     },
+  },
+  async created() {
+    this.store.apiBaseUrl = this.apiBaseUrl;
+    this.store.participantId = this.participantId;
+    this.store.studyId = this.studyId;
+    this.store.auth = this.auth;
+
+    this.loading = true;
+    this.store.loadMessages()
+        .then(() => {
+          this.loading = false;
+          this.scrollToBottom();
+        }).catch((e) => {
+          // TODO: proper error handling
+          console.log(e);
+          this.loading = false;
+        });
+  },
+  mounted() {
+    this.scrollToBottom();
+    this.handleTop();
+    this.poll();
   },
   methods: {
     resizeTextarea(event) {

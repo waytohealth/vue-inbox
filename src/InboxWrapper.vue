@@ -5,7 +5,7 @@
       :study-id="studyId"
       :api-base-url="apiBaseUrl"
       :auth="auth"
-      />
+    />
   </div>
 </template>
 
