@@ -59,12 +59,36 @@
         </div>
       </div>
     </div>
-    <ImageLightbox
+    <b-modal
+      id="image-lightbox"
       v-model="imageLightbox.isOpen"
-      :msg-id="imageLightbox.msgId"
-      :image-index="imageLightbox.idx"
-      :store="store"
-    />
+      centered
+      hide-footer
+      ok-only
+      size="lg"
+      ok-title="Close"
+      lazy
+      body-class="d-flex justify-content-center"
+    >
+      <template #modal-header>
+        <b-button :disabled="disablePreviousImageButton" @click="previousImage">
+          Prev
+        </b-button>
+        <b-button>
+          close
+        </b-button>
+        <b-button :disabled="disableNextImageButton" @click="nextImage">
+          next
+        </b-button>
+      </template>
+      <LazyImage
+        v-if="imageLightbox.isOpen"
+        :key="`${imageLightbox.msgId}_${imageLightbox.imageIndex}`"
+        :store="store"
+        image-class="modal-img"
+        :url="getImageUrl(imageLightbox.msgId, imageLightbox.imageIndex)"
+      />
+    </b-modal>
 
     <div>
       <textarea
@@ -105,12 +129,10 @@ import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import LazyImage from "./components/LazyImage";
-import ImageLightbox from "@/ImageLightbox.vue";
 
 export default {
   name: "InboxComponent",
   components: {
-    ImageLightbox,
     LazyImage
   },
   props: {
@@ -154,11 +176,37 @@ export default {
       imageLightbox: {
         isOpen: false,
         msgId: null,
-        idx: 0,
+        imageIndex: 0,
       },
     }
   },
   computed: {
+    images() {
+      const output = [];
+      Object.values(this.store.messagesObj).forEach(msg => {
+        msg.media.forEach((media, imageIndex) => {
+          output.push({
+            msgId: msg.id,
+            imageIndex: imageIndex
+          })
+        });
+      })
+      return output;
+    },
+    firstImage() {
+      return this.images[0];
+    },
+    lastImage() {
+      return this.images[this.images.length - 1];
+    },
+    disablePreviousImageButton() {
+      return this.imageLightbox.msgId === this.firstImage.msgId
+        && this.imageLightbox.imageIndex === this.firstImage.imageIndex;
+    },
+    disableNextImageButton() {
+      return this.imageLightbox.msgId === this.lastImage.msgId
+        && this.imageLightbox.imageIndex === this.lastImage.imageIndex;
+    },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
         return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
@@ -213,10 +261,33 @@ export default {
     this.poll();
   },
   methods: {
-    openImageLightbox(msgId, idx) {
+    openImageLightbox(msgId, imageIndex) {
       this.imageLightbox.isOpen = true;
       this.imageLightbox.msgId = msgId;
-      this.imageLightbox.idx = idx;
+      this.imageLightbox.imageIndex = imageIndex;
+    },
+    previousImage() {
+      // debugger;
+      const x = this.images.findIndex(item =>
+        item.msgId === this.imageLightbox.msgId
+        && item.imageIndex === this.imageLightbox.imageIndex
+      );
+      if (x <= 0) {
+        return;
+      }
+      this.imageLightbox.msgId = this.images[x - 1].msgId;
+      this.imageLightbox.imageIndex = this.images[x - 1].imageIndex;
+    },
+    nextImage() {
+      const x = this.images.indexOf({
+        msgId: this.imageLightbox.msgId,
+        imageIndex: this.imageLightbox.imageIndex
+      });
+      if (x >= this.images.length - 1) {
+        return;
+      }
+      this.imageLightbox.msgId = this.images[x + 1].msgId;
+      this.imageLightbox.imageIndex = this.images[x + 1].imageIndex;
     },
     resizeTextarea(event) {
       event.target.style.height = "auto";

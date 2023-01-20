@@ -58,6 +58,6 @@ export default {
 .modal-img {
   text-align: center;
   max-width: 100%;
-  max-height: 80vh;
+  height: 80vh;
 }
 </style>
