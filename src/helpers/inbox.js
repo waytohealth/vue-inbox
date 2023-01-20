@@ -47,7 +47,7 @@ let helper = {
   },
   messageClasses: function(msg) {
     let classes = [];
-    classes.push(msg.direction == 'inbound' ? 'inbound' : 'outbound');
+    classes.push(msg.direction === 'inbound' ? 'inbound' : 'outbound');
     classes.push(msg.sender ? 'manual' : 'automated');
     return classes;
   },

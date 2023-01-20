@@ -1,8 +1,12 @@
 <template>
   <div>
-    <img class="inbox-img" v-if="src" :src="src"/>
+    <img
+      v-if="src"
+      class="inbox-img"
+      :src="src"
+    >
     <div v-else class="inbox-img">
-      <b-spinner variant="primary" label="Spinning"></b-spinner>
+      <b-spinner variant="primary" label="Spinning" />
     </div>
   </div>
 </template>
@@ -13,7 +17,7 @@ export default {
   props: {
     store: {
       type: Object,
-      reruired: true
+      required: true
     },
     url: {
       type: String,

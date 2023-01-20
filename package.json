@@ -11,6 +11,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "prebuild": "rimraf ./dist",
+    "lint": "eslint --ext .js,.vue src",
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
     "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
@@ -36,8 +37,8 @@
     "bootstrap": "4",
     "bootstrap-vue": "^2.22.0",
     "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
+    "eslint": "^8.32.0",
+    "eslint-plugin-vue": "^9.9.0",
     "minimist": "^1.2.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",
