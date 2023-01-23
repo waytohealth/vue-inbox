@@ -1,11 +1,14 @@
 <template>
   <div>
-    <InboxComponent
-      :participant-id="participant_id"
-      :study-id="studyId"
-      :api-base-url="apiBaseUrl"
-      :auth="auth"
-    />
+    <h1>Inbox</h1>
+    <div class="inbox-wrapper">
+      <InboxComponent
+        :participant-id="participant_id"
+        :study-id="studyId"
+        :api-base-url="apiBaseUrl"
+        :auth="auth"
+      />
+    </div>
   </div>
 </template>
 
@@ -29,3 +32,10 @@ export default {
   }
 }
 </script>
+<style>
+.inbox-wrapper {
+  border: 1px solid black;
+  max-width: 800px;
+  margin: auto 20px;
+}
+</style>
