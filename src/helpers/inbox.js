@@ -32,6 +32,10 @@ let helper = {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).format('M/D/YY h:mm:ss A');
   },
+  imageDetailTime: function(msg) {
+    let datetime = msg.sent_at || msg.created_at;
+    return dayjs(datetime).format('dddd, D MMMM YYYY – h:mm:ss A');
+  },
   formatDate: function(date) {
     return dayjs(date).format('~ dddd, D MMMM YYYY ~');
   },

@@ -2,10 +2,10 @@
   <div>
     <img
       v-if="src"
-      class="inbox-img"
+      :class="imageClass"
       :src="src"
     >
-    <div v-else class="inbox-img">
+    <div v-else :class="imageClass">
       <b-spinner variant="primary" label="Spinning" />
     </div>
   </div>
@@ -22,6 +22,10 @@ export default {
     url: {
       type: String,
       required: true
+    },
+    imageClass: {
+      type: String,
+      default: 'inbox-img'
     }
   },
   data() {
@@ -42,13 +46,18 @@ export default {
 
 <style scoped>
 .inbox-img {
-  width: 200px;
-  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
   margin: 20px 0;
   text-align: center;
   background-repeat: no-repeat;
   background-position: 50% 50%;
   -webkit-background-size: cover;
   background-size: cover;
+}
+.modal-img {
+  text-align: center;
+  max-width: 100%;
+  max-height: 80vh;
 }
 </style>

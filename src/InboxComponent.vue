@@ -3,7 +3,7 @@
     <div>
       <div class="inbox">
         <div v-if="store.loading.older" class="text-center">
-          <b-spinner variant="primary" label="Spinning" />
+          <b-spinner variant="primary" label="Spinning"/>
         </div>
         <div v-for="(msgs, date) in messagesByDate" :key="date">
           <div class="date">
@@ -42,10 +42,15 @@
               </b-popover>
               {{ msg.message_text }}
               <ul v-if="msg.media.length > 0" class="list-inline">
-                <li v-for="(media, idx) in msg.media" :key="media.sid">
+                <li
+                  v-for="(media, idx) in msg.media"
+                  :key="media.sid"
+                  class="cursor-pointer"
+                >
                   <LazyImage
                     :store="store"
-                    :url="getImageUrl(msg, idx)"
+                    :url="store.getImageUrl(msg.id, idx)"
+                    @click.native="openImageLightbox(msg.id, idx)"
                   />
                 </li>
               </ul>
@@ -54,6 +59,11 @@
         </div>
       </div>
     </div>
+    <ImageLightbox
+      ref="imageLightbox"
+      v-model="showImageLightbox"
+      :store="store"
+    />
 
     <div>
       <textarea
@@ -77,7 +87,8 @@
         :class="styleConfig.inboxSubmit"
         class="disabled"
       >
-        Send SMS Message <b-spinner
+        Send SMS Message
+        <b-spinner
           small
           variant="light"
           label="Spinning"
@@ -93,9 +104,12 @@ import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import LazyImage from "./components/LazyImage";
+import ImageLightbox from "@/components/ImageLightbox.vue";
+
 export default {
   name: "InboxComponent",
   components: {
+    ImageLightbox,
     LazyImage
   },
   props: {
@@ -135,7 +149,8 @@ export default {
       styleConfig: Object.assign(styles, this.styles),
       store: store,
       inboxHelper: inboxHelper,
-      textContent: ""
+      textContent: "",
+      showImageLightbox: false,
     }
   },
   computed: {
@@ -147,7 +162,7 @@ export default {
     },
     messagesByDate() {
       if (this.sortedMessages.length) {
-        return this.sortedMessages.reduce(function(rv, x) {
+        return this.sortedMessages.reduce(function (rv, x) {
           (rv[x['created_at'].split(" ")[0]] = rv[x['created_at'].split(" ")[0]] || []).push(x);
           return rv;
         }, {});
@@ -173,14 +188,14 @@ export default {
 
     this.loading = true;
     this.store.loadMessages()
-        .then(() => {
-          this.loading = false;
-          this.scrollToBottom();
-        }).catch((e) => {
-          // TODO: proper error handling
-          console.log(e);
-          this.loading = false;
-        });
+      .then(() => {
+        this.loading = false;
+        this.scrollToBottom();
+      }).catch((e) => {
+      // TODO: proper error handling
+      console.log(e);
+      this.loading = false;
+    });
   },
   mounted() {
     // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
@@ -193,6 +208,11 @@ export default {
     this.poll();
   },
   methods: {
+    openImageLightbox(msgId, imageIndex) {
+      this.showImageLightbox = true;
+      this.$refs.imageLightbox.open(msgId, imageIndex);
+    },
+
     resizeTextarea(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
@@ -208,7 +228,7 @@ export default {
     },
     handleTop() {
       let inboxDiv = this.$el?.querySelector('.inbox');
-      inboxDiv.onscroll =  () => {
+      inboxDiv.onscroll = () => {
         if (inboxDiv) {
           if (inboxDiv.scrollTop === 0) {
             store.loadOlder();
@@ -222,9 +242,6 @@ export default {
         this.scrollToBottom();
         this.textContent = "";
       }
-    },
-    getImageUrl(msg, imageIndex) {
-      return this.store.apiBaseUrl + "/api/v2/text_messages/" + msg.id + "/image/" + imageIndex;
     },
     poll() {
       setTimeout(() => {
@@ -257,18 +274,20 @@ export default {
 
 <style scoped>
 .inbox {
-  max-height:60vh;
-  min-height:60vh;
+  max-height: 60vh;
+  min-height: 60vh;
   overflow-x: hidden;
   overflow-y: scroll;
-  border-bottom: 2px solid rgba(0,0,0,.2);
+  border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
+
 .date {
   clear: both;
   font-size: 1.1em;
   color: gray;
   text-align: center;
 }
+
 .message {
   position: relative;
   display: inline-block;
@@ -281,6 +300,7 @@ export default {
   -webkit-box-shadow: 0 0 6px #b2b2b2;
   box-shadow: 0 0 6px #b2b2b2;
 }
+
 div.sender {
   float: right;
   margin: 0 20px 0 0;
@@ -288,17 +308,20 @@ div.sender {
   font-size: 12px;
   color: #6c6f76;
 }
+
 .inbound {
   float: left;
   margin: 5px 45px 5px 20px;
   background-color: #bdf9bd;
 }
+
 .inbound::before {
   left: -9px;
   background-color: #bdf9bd;
-  -webkit-box-shadow: -2px 2px 2px 0 rgba(178,178,178,.4);
-  box-shadow: -2px 2px 2px 0 rgba(178,178,178,.4);
+  -webkit-box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
+  box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
 }
+
 .message::before {
   position: absolute;
   top: 11px;
@@ -312,30 +335,41 @@ div.sender {
   -o-transform: rotate(29deg) skew(-35deg);
   transform: rotate(29deg) skew(-35deg);
 }
+
 .outbound {
   float: right;
   margin: 5px 20px 5px 45px;
 }
+
 .outbound::before {
   right: -9px;
   -webkit-box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
   box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
 }
+
 .outbound.automated, .outbound.automated::before {
   background-color: #e0f1ff;
 }
+
 .outbound.manual, .outbound.manual::before {
   background-color: #badfff;
 }
+
 .time {
   float: right;
   margin: 0 3px 0;
   color: gray;
 }
+
 .status-icon {
   cursor: pointer;
 }
+
 textarea {
   resize: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
