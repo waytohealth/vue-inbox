@@ -45,7 +45,7 @@
                 <li v-for="(media, idx) in msg.media" :key="media.sid">
                   <LazyImage
                     :store="store"
-                    :url="getImageUrl(msg.id, idx)"
+                    :url="store.getImageUrl(msg.id, idx)"
                     @click="openImageLightbox(msg.id, idx)"
                   />
                   <a
@@ -59,34 +59,11 @@
         </div>
       </div>
     </div>
-    <b-modal
-      id="image-lightbox"
-      v-model="imageLightbox.isOpen"
-      centered
-      hide-footer
-      hide-header
-      size="lg"
-      lazy
-      body-class="d-flex justify-content-center"
-    >
-      <LazyImage
-        v-if="imageLightbox.isOpen"
-        :key="`${imageLightbox.msgId}_${imageLightbox.imageIndex}`"
-        :store="store"
-        image-class="modal-img"
-        :url="getImageUrl(imageLightbox.msgId, imageLightbox.imageIndex)"
-      />
-      <span
-        v-if="showPreviousImageButton"
-        id="prev-btn"
-        @click="previousImage"
-      >❮</span>
-      <span
-        v-if="showNextImageButton"
-        id="next-btn"
-        @click="nextImage"
-      >❯</span>
-    </b-modal>
+    <ImageLightbox
+      ref="imageLightbox"
+      v-model="showImageLightbox"
+      :store="store"
+    />
 
     <div>
       <textarea
@@ -127,10 +104,12 @@ import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import LazyImage from "./components/LazyImage";
+import ImageLightbox from "@/components/ImageLightbox.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    ImageLightbox,
     LazyImage
   },
   props: {
@@ -171,40 +150,10 @@ export default {
       store: store,
       inboxHelper: inboxHelper,
       textContent: "",
-      imageLightbox: {
-        isOpen: false,
-        msgId: null,
-        imageIndex: 0,
-      },
+      showImageLightbox: false,
     }
   },
   computed: {
-    images() {
-      const output = [];
-      Object.values(this.store.messagesObj).forEach(msg => {
-        msg.media.forEach((media, imageIndex) => {
-          output.push({
-            msgId: msg.id,
-            imageIndex: imageIndex
-          })
-        });
-      })
-      return output;
-    },
-    firstImage() {
-      return this.images[0];
-    },
-    lastImage() {
-      return this.images[this.images.length - 1];
-    },
-    showPreviousImageButton() {
-      return this.imageLightbox.msgId !== this.firstImage.msgId
-        || this.imageLightbox.imageIndex !== this.firstImage.imageIndex;
-    },
-    showNextImageButton() {
-      return this.imageLightbox.msgId !== this.lastImage.msgId
-        || this.imageLightbox.imageIndex !== this.lastImage.imageIndex;
-    },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
         return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
@@ -260,32 +209,10 @@ export default {
   },
   methods: {
     openImageLightbox(msgId, imageIndex) {
-      this.imageLightbox.isOpen = true;
-      this.imageLightbox.msgId = msgId;
-      this.imageLightbox.imageIndex = imageIndex;
+      this.showImageLightbox = true;
+      this.$refs.imageLightbox.open(msgId, imageIndex);
     },
-    previousImage() {
-      const x = this.images.findIndex(item =>
-        item.msgId === this.imageLightbox.msgId
-        && item.imageIndex === this.imageLightbox.imageIndex
-      );
-      if (x <= 0) {
-        return;
-      }
-      this.imageLightbox.msgId = this.images[x - 1].msgId;
-      this.imageLightbox.imageIndex = this.images[x - 1].imageIndex;
-    },
-    nextImage() {
-      const x = this.images.findIndex(item =>
-        item.msgId === this.imageLightbox.msgId
-        && item.imageIndex === this.imageLightbox.imageIndex
-      );
-      if (x >= this.images.length - 1) {
-        return;
-      }
-      this.imageLightbox.msgId = this.images[x + 1].msgId;
-      this.imageLightbox.imageIndex = this.images[x + 1].imageIndex;
-    },
+
     resizeTextarea(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
@@ -315,9 +242,6 @@ export default {
         this.scrollToBottom();
         this.textContent = "";
       }
-    },
-    getImageUrl(msgId, imageIndex) {
-      return this.store.apiBaseUrl + "/api/v2/text_messages/" + msgId + "/image/" + imageIndex;
     },
     poll() {
       setTimeout(() => {
@@ -443,38 +367,6 @@ div.sender {
 
 textarea {
   resize: none;
-}
-
-#prev-btn,
-#next-btn {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -50px;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.6s ease;
-  user-select: none;
-  -webkit-user-select: none;
-  opacity: 0.3;
-  background-color: #000000;
-}
-
-#prev-btn {
-  left: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-#next-btn {
-  right: 0;
-  border-radius: 0 3px 3px 0;
-}
-#prev-btn:hover,
-#next-btn:hover {
-  opacity: 0.8;
 }
 
 </style>

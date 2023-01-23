@@ -43,6 +43,9 @@ let appState = {
 
     return URL.createObjectURL(blob);
   },
+  getImageUrl(msgId, imageIndex) {
+    return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
+  },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
