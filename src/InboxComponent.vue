@@ -42,16 +42,16 @@
               </b-popover>
               {{ msg.message_text }}
               <ul v-if="msg.media.length > 0" class="list-inline">
-                <li v-for="(media, idx) in msg.media" :key="media.sid">
+                <li
+                  v-for="(media, idx) in msg.media"
+                  :key="media.sid"
+                  class="cursor-pointer"
+                >
                   <LazyImage
                     :store="store"
-                    :url="getImageUrl(msg.id, idx)"
-                    @click="openImageLightbox(msg.id, idx)"
+                    :url="store.getImageUrl(msg.id, idx)"
+                    @click.native="openImageLightbox(msg.id, idx)"
                   />
-                  <a
-                    href="#"
-                    @click.prevent="openImageLightbox(msg.id, idx)"
-                  >Open modal</a>
                 </li>
               </ul>
             </div>
@@ -59,36 +59,11 @@
         </div>
       </div>
     </div>
-    <b-modal
-      id="image-lightbox"
-      v-model="imageLightbox.isOpen"
-      centered
-      hide-footer
-      ok-only
-      size="lg"
-      ok-title="Close"
-      lazy
-      body-class="d-flex justify-content-center"
-    >
-      <template #modal-header>
-        <b-button :disabled="disablePreviousImageButton" @click="previousImage">
-          Prev
-        </b-button>
-        <b-button>
-          close
-        </b-button>
-        <b-button :disabled="disableNextImageButton" @click="nextImage">
-          next
-        </b-button>
-      </template>
-      <LazyImage
-        v-if="imageLightbox.isOpen"
-        :key="`${imageLightbox.msgId}_${imageLightbox.imageIndex}`"
-        :store="store"
-        image-class="modal-img"
-        :url="getImageUrl(imageLightbox.msgId, imageLightbox.imageIndex)"
-      />
-    </b-modal>
+    <ImageLightbox
+      ref="imageLightbox"
+      v-model="showImageLightbox"
+      :store="store"
+    />
 
     <div>
       <textarea
@@ -129,10 +104,12 @@ import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import LazyImage from "./components/LazyImage";
+import ImageLightbox from "@/components/ImageLightbox.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    ImageLightbox,
     LazyImage
   },
   props: {
@@ -173,40 +150,10 @@ export default {
       store: store,
       inboxHelper: inboxHelper,
       textContent: "",
-      imageLightbox: {
-        isOpen: false,
-        msgId: null,
-        imageIndex: 0,
-      },
+      showImageLightbox: false,
     }
   },
   computed: {
-    images() {
-      const output = [];
-      Object.values(this.store.messagesObj).forEach(msg => {
-        msg.media.forEach((media, imageIndex) => {
-          output.push({
-            msgId: msg.id,
-            imageIndex: imageIndex
-          })
-        });
-      })
-      return output;
-    },
-    firstImage() {
-      return this.images[0];
-    },
-    lastImage() {
-      return this.images[this.images.length - 1];
-    },
-    disablePreviousImageButton() {
-      return this.imageLightbox.msgId === this.firstImage.msgId
-        && this.imageLightbox.imageIndex === this.firstImage.imageIndex;
-    },
-    disableNextImageButton() {
-      return this.imageLightbox.msgId === this.lastImage.msgId
-        && this.imageLightbox.imageIndex === this.lastImage.imageIndex;
-    },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
         return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
@@ -222,15 +169,15 @@ export default {
       }
       return [];
     },
+    latestMessageId() {
+      return Math.max(...Object.keys(this.store.messagesObj));
+    }
   },
   watch: {
-    sortedMessages(newObj, oldObj) {
-      if (newObj.length > oldObj.length && store.meta.updates) {
-        this.$nextTick(() => {
-          this.scrollToBottom(true);
-        });
-      }
-      store.meta.updates = false;
+    latestMessageId() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
     },
   },
   async created() {
@@ -251,52 +198,32 @@ export default {
     });
   },
   mounted() {
-    this.scrollToBottom();
+    // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
+    // it should stay where we were
+    if (!this.scrolled) {
+      this.scrollToBottom();
+      this.scrolled = true;
+    }
     this.handleTop();
     this.poll();
   },
   methods: {
     openImageLightbox(msgId, imageIndex) {
-      this.imageLightbox.isOpen = true;
-      this.imageLightbox.msgId = msgId;
-      this.imageLightbox.imageIndex = imageIndex;
+      this.showImageLightbox = true;
+      this.$refs.imageLightbox.open(msgId, imageIndex);
     },
-    previousImage() {
-      // debugger;
-      const x = this.images.findIndex(item =>
-        item.msgId === this.imageLightbox.msgId
-        && item.imageIndex === this.imageLightbox.imageIndex
-      );
-      if (x <= 0) {
-        return;
-      }
-      this.imageLightbox.msgId = this.images[x - 1].msgId;
-      this.imageLightbox.imageIndex = this.images[x - 1].imageIndex;
-    },
-    nextImage() {
-      const x = this.images.indexOf({
-        msgId: this.imageLightbox.msgId,
-        imageIndex: this.imageLightbox.imageIndex
-      });
-      if (x >= this.images.length - 1) {
-        return;
-      }
-      this.imageLightbox.msgId = this.images[x + 1].msgId;
-      this.imageLightbox.imageIndex = this.images[x + 1].imageIndex;
-    },
+
     resizeTextarea(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
-    scrollToBottom(force) {
-      if (!this.scrolled || force) {
-        let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;
-        if (lastMessage) {
-          lastMessage.scrollIntoView();
-          this.scrolled = true;
-        } else {
-          console.log("Failed to find last element");
-        }
+    scrollToBottom() {
+      const el = this.$el.querySelector('.inbox');
+      if (el.scrollTo) {
+        el.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
+      } else {
+        // IE fallback
+        el.scrollTop = el.scrollHeight;
       }
     },
     handleTop() {
@@ -312,12 +239,9 @@ export default {
     async sendMessage() {
       if (this.textContent.length) {
         await this.store.sendMessage(this.textContent);
-        this.scrollToBottom(true);
+        this.scrollToBottom();
         this.textContent = "";
       }
-    },
-    getImageUrl(msgId, imageIndex) {
-      return this.store.apiBaseUrl + "/api/v2/text_messages/" + msgId + "/image/" + imageIndex;
     },
     poll() {
       setTimeout(() => {
@@ -443,5 +367,9 @@ div.sender {
 
 textarea {
   resize: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

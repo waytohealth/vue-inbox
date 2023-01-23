@@ -11,7 +11,6 @@ let appState = {
   },
   meta: {
     lastUpdated: null,
-    updates: false,
     oldest: null,
     limit: 20
   },
@@ -43,6 +42,9 @@ let appState = {
     let blob = await res.blob();
 
     return URL.createObjectURL(blob);
+  },
+  getImageUrl(msgId, imageIndex) {
+    return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
   },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
@@ -98,11 +100,8 @@ let appState = {
     };
 
     this.loading.polling = true;
-    let messages = await this.fetchMessages(params);
+    await this.fetchMessages(params);
     this.loading.polling = false;
-    if (messages.length) {
-      this.meta.updates = true;
-    }
   },
   async loadOlder() {
     if (this.loading.older) {
@@ -142,7 +141,6 @@ let appState = {
     obj[text.id] = text;
 
     this.messagesObj = Object.assign({}, this.messagesObj, obj);
-    this.meta.updates = true;
     this.loading.send = false;
   }
 };
