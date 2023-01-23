@@ -194,12 +194,13 @@ export default {
     },
     scrollToBottom(force) {
       if (!this.scrolled || force) {
-        let lastMessage = this.$el.querySelector('.inbox')?.lastElementChild?.lastElementChild;
-        if (lastMessage) {
-          lastMessage.scrollIntoView();
-          this.scrolled = true;
+        this.scrolled = true;
+        const el = this.$el.querySelector('.inbox');
+        if (el.scrollTo) {
+          el.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
         } else {
-          console.log("Failed to find last element");
+          // IE fallback
+          el.scrollTop = el.scrollHeight;
         }
       }
     },
