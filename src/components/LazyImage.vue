@@ -46,8 +46,8 @@ export default {
 
 <style scoped>
 .inbox-img {
-  width: 200px;
-  height: 200px;
+  max-width: 200px;
+  max-height: 200px;
   margin: 20px 0;
   text-align: center;
   background-repeat: no-repeat;
@@ -58,6 +58,6 @@ export default {
 .modal-img {
   text-align: center;
   max-width: 100%;
-  height: 80vh;
+  max-height: 80vh;
 }
 </style>
