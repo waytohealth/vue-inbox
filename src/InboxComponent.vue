@@ -154,15 +154,16 @@ export default {
       }
       return [];
     },
+    latestMessageId() {
+      return Math.max(...Object.keys(this.store.messagesObj));
+    }
   },
   watch: {
-    sortedMessages(newObj, oldObj) {
-      if (newObj.length > oldObj.length && store.meta.updates) {
-        this.$nextTick(() => {
-          this.scrollToBottom(true);
-        });
-      }
-      store.meta.updates = false;
+    latestMessageId() {
+      console.log('latestMessageId changed');
+      this.$nextTick(() => {
+        this.scrollToBottom(true);
+      });
     },
   },
   async created() {
