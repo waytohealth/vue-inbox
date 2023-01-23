@@ -162,7 +162,7 @@ export default {
     latestMessageId() {
       console.log('latestMessageId changed');
       this.$nextTick(() => {
-        this.scrollToBottom(true);
+        this.scrollToBottom();
       });
     },
   },
@@ -184,7 +184,13 @@ export default {
         });
   },
   mounted() {
-    this.scrollToBottom();
+    // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
+    // it should stay where we were
+    if (!this.scrolled) {
+      console.log('scrolling from mounted')
+      this.scrollToBottom();
+      this.scrolled = true;
+    }
     this.handleTop();
     this.poll();
   },
@@ -193,16 +199,13 @@ export default {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
-    scrollToBottom(force) {
-      if (!this.scrolled || force) {
-        this.scrolled = true;
-        const el = this.$el.querySelector('.inbox');
-        if (el.scrollTo) {
-          el.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
-        } else {
-          // IE fallback
-          el.scrollTop = el.scrollHeight;
-        }
+    scrollToBottom() {
+      const el = this.$el.querySelector('.inbox');
+      if (el.scrollTo) {
+        el.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
+      } else {
+        // IE fallback
+        el.scrollTop = el.scrollHeight;
       }
     },
     handleTop() {
@@ -218,7 +221,7 @@ export default {
     async sendMessage() {
       if (this.textContent.length) {
         await this.store.sendMessage(this.textContent);
-        this.scrollToBottom(true);
+        this.scrollToBottom();
         this.textContent = "";
       }
     },
