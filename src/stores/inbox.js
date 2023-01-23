@@ -20,6 +20,7 @@ let appState = {
     polling: false,
     send: false
   },
+  imageCache: {},
   authCredentials() {
     if (this.auth.method === 'session') {
       return {
@@ -34,6 +35,10 @@ let appState = {
     }
   },
   async fetchImage(url) {
+    if (this.imageCache[url]) {
+      return this.imageCache[url];
+    }
+
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
       method: "GET"
@@ -41,7 +46,9 @@ let appState = {
     let res = await fetch(url, requestParams);
     let blob = await res.blob();
 
-    return URL.createObjectURL(blob);
+    this.imageCache[url] = URL.createObjectURL(blob);
+
+    return this.imageCache[url];
   },
   getImageUrl(msgId, imageIndex) {
     return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
