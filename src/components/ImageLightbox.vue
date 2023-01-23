@@ -4,10 +4,11 @@
     :visible="value"
     centered
     hide-footer
-    hide-header
     size="lg"
     lazy
     body-class="d-flex justify-content-center"
+    :title="sentTime"
+    :title-class="'text-center w-100'"
     @change="$emit('input', $event)"
   >
     <LazyImage
@@ -32,6 +33,7 @@
 
 <script>
 import LazyImage from "@/components/LazyImage.vue";
+import inboxHelper from '../helpers/inbox';
 
 export default {
   name: "ImageLightbox",
@@ -66,6 +68,14 @@ export default {
         });
       })
       return output;
+    },
+    sentTime() {
+      const msg = this.store.messagesObj[this.msgId];
+      if (msg) {
+        return inboxHelper.imageDetailTime(msg);
+      } else {
+        return '';
+      }
     },
     firstImage() {
       return this.images[0];
