@@ -160,7 +160,6 @@ export default {
   },
   watch: {
     latestMessageId() {
-      console.log('latestMessageId changed');
       this.$nextTick(() => {
         this.scrollToBottom();
       });
@@ -187,7 +186,6 @@ export default {
     // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
     // it should stay where we were
     if (!this.scrolled) {
-      console.log('scrolling from mounted')
       this.scrollToBottom();
       this.scrolled = true;
     }
