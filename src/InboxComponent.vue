@@ -42,16 +42,16 @@
               </b-popover>
               {{ msg.message_text }}
               <ul v-if="msg.media.length > 0" class="list-inline">
-                <li v-for="(media, idx) in msg.media" :key="media.sid">
+                <li
+                  v-for="(media, idx) in msg.media"
+                  :key="media.sid"
+                  class="cursor-pointer"
+                >
                   <LazyImage
                     :store="store"
                     :url="store.getImageUrl(msg.id, idx)"
-                    @click="openImageLightbox(msg.id, idx)"
+                    @click.native="openImageLightbox(msg.id, idx)"
                   />
-                  <a
-                    href="#"
-                    @click.prevent="openImageLightbox(msg.id, idx)"
-                  >Open modal</a>
                 </li>
               </ul>
             </div>
@@ -369,4 +369,7 @@ textarea {
   resize: none;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
 </style>
