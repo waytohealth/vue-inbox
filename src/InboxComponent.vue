@@ -64,23 +64,11 @@
       v-model="imageLightbox.isOpen"
       centered
       hide-footer
-      ok-only
+      hide-header
       size="lg"
-      ok-title="Close"
       lazy
       body-class="d-flex justify-content-center"
     >
-      <template #modal-header>
-        <b-button :disabled="disablePreviousImageButton" @click="previousImage">
-          Prev
-        </b-button>
-        <b-button>
-          close
-        </b-button>
-        <b-button :disabled="disableNextImageButton" @click="nextImage">
-          next
-        </b-button>
-      </template>
       <LazyImage
         v-if="imageLightbox.isOpen"
         :key="`${imageLightbox.msgId}_${imageLightbox.imageIndex}`"
@@ -88,6 +76,16 @@
         image-class="modal-img"
         :url="getImageUrl(imageLightbox.msgId, imageLightbox.imageIndex)"
       />
+      <span
+        v-if="showPreviousImageButton"
+        id="prev-btn"
+        @click="previousImage"
+      >❮</span>
+      <span
+        v-if="showNextImageButton"
+        id="next-btn"
+        @click="nextImage"
+      >❯</span>
     </b-modal>
 
     <div>
@@ -199,13 +197,13 @@ export default {
     lastImage() {
       return this.images[this.images.length - 1];
     },
-    disablePreviousImageButton() {
-      return this.imageLightbox.msgId === this.firstImage.msgId
-        && this.imageLightbox.imageIndex === this.firstImage.imageIndex;
+    showPreviousImageButton() {
+      return this.imageLightbox.msgId !== this.firstImage.msgId
+        || this.imageLightbox.imageIndex !== this.firstImage.imageIndex;
     },
-    disableNextImageButton() {
-      return this.imageLightbox.msgId === this.lastImage.msgId
-        && this.imageLightbox.imageIndex === this.lastImage.imageIndex;
+    showNextImageButton() {
+      return this.imageLightbox.msgId !== this.lastImage.msgId
+        || this.imageLightbox.imageIndex !== this.lastImage.imageIndex;
     },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
@@ -267,7 +265,6 @@ export default {
       this.imageLightbox.imageIndex = imageIndex;
     },
     previousImage() {
-      // debugger;
       const x = this.images.findIndex(item =>
         item.msgId === this.imageLightbox.msgId
         && item.imageIndex === this.imageLightbox.imageIndex
@@ -279,10 +276,10 @@ export default {
       this.imageLightbox.imageIndex = this.images[x - 1].imageIndex;
     },
     nextImage() {
-      const x = this.images.indexOf({
-        msgId: this.imageLightbox.msgId,
-        imageIndex: this.imageLightbox.imageIndex
-      });
+      const x = this.images.findIndex(item =>
+        item.msgId === this.imageLightbox.msgId
+        && item.imageIndex === this.imageLightbox.imageIndex
+      );
       if (x >= this.images.length - 1) {
         return;
       }
@@ -447,4 +444,37 @@ div.sender {
 textarea {
   resize: none;
 }
+
+#prev-btn,
+#next-btn {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  transition: 0.6s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0.3;
+  background-color: #000000;
+}
+
+#prev-btn {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+#next-btn {
+  right: 0;
+  border-radius: 0 3px 3px 0;
+}
+#prev-btn:hover,
+#next-btn:hover {
+  opacity: 0.8;
+}
+
 </style>
