@@ -86,12 +86,16 @@ let appState = {
       throw new Error("womp");
     }
 
+    let messages = (await res.json()).data;
+    return this.pullMessagesFromData(messages, update);
+  },
+  pullMessagesFromData(messages, update = true) {
     if (update) {
       // Our API call finds items updated after the lastUpdated, so if the lastUpdated matched the updated_at
       // of a text we wouldn't get it. Move the search back by a second to account for that
       this.meta.lastUpdated = dayjs().subtract(1, 'second').format('YYYY-MM-DD HH:mm:ss');
     }
-    let messages = (await res.json()).data;
+
     if (messages.length) {
       let newMessages = messages.reduce((accumulator, text) => {
         if (!this.meta.oldest || text.created_at < this.meta.oldest) {
@@ -101,14 +105,26 @@ let appState = {
       }, {});
       this.messagesObj = Object.assign({}, this.messagesObj, newMessages)
     }
-    return messages;
   },
   async loadMessages() {
     if (this.loading.initial) {
       return false;
     }
     this.loading.initial = true;
-    await this.fetchMessages();
+    // use the participants endpoint for the initial load so we can also get info about them
+    let auth = this.authCredentials();
+    let requestParams = Object.assign(auth, {
+      method: "GET"
+    });
+    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.limit})`;
+    let res = await fetch(url, requestParams);
+    if (!res.ok) {
+      throw new Error("womp");
+    }
+    const ppt = (await res.json()).data;
+    inboxHelper.setTimezone(ppt?.time_zone_name ?? "America/New_York");
+    this.pullMessagesFromData(ppt.text_messages, true);
+
     this.loading.initial = false;
   },
   async poll() {
