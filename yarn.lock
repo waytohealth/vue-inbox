@@ -6405,6 +6405,11 @@ void-elements@^3.1.0:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-3.1.0.tgz#614f7fbf8d801f0bb5f0661f5b2f5785750e4f09"
   integrity sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==
 
+vue-emoji-picker@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-emoji-picker/-/vue-emoji-picker-1.0.3.tgz#168604163e41b3a2a0f9e9a21bb595fd8bac05e4"
+  integrity sha512-t1UyrvPHKgWzj8maqNvMIHfY4B2Hn+filKTiy4ik+xweF0gKMx1r9C0YDg1zgaYnB6PBjctHwr9vwkipb4lUaw==
+
 vue-eslint-parser@^9.0.1:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-9.1.0.tgz#0e121d1bb29bd10763c83e3cc583ee03434a9dd5"
