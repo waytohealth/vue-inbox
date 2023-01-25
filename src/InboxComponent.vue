@@ -1,5 +1,6 @@
 <template>
-  <div class="component">
+  <div class="inbox-component">
+    <p>All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}</p>
     <div>
       <div class="inbox">
         <div v-if="store.loading.older" class="text-center">
@@ -187,6 +188,7 @@ export default {
     this.store.auth = this.auth;
 
     this.loading = true;
+    this.store.loadParticipant();
     this.store.loadMessages()
       .then(() => {
         this.loading = false;

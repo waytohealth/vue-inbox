@@ -1,6 +1,19 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(advancedFormat);
 
 let helper = {
+  tz: "America/New_York",
+  setTimezone(tz) {
+    this.tz = tz;
+  },
+  getFriendlyTimezoneName() {
+    return dayjs().tz(this.tz).format("zzz");
+  },
   statusType: function(msg) {
     switch (msg.status) {
       case 'delivered':
@@ -22,22 +35,22 @@ let helper = {
   },
   messageTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('h:mm A');
+    return dayjs(datetime).tz(this.tz).format('h:mm A');
   },
   tooltipTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('h:mm:ss A');
+    return dayjs(datetime).tz(this.tz).format('h:mm:ss A z');
   },
   messageDetailTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('M/D/YY h:mm:ss A');
+    return dayjs(datetime).tz(this.tz).format('M/D/YY h:mm:ss A z');
   },
   imageDetailTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
-    return dayjs(datetime).format('dddd, D MMMM YYYY – h:mm:ss A');
+    return dayjs(datetime).tz(this.tz).format('dddd, D MMMM YYYY – h:mm:ss A');
   },
   formatDate: function(date) {
-    return dayjs(date).format('~ dddd, D MMMM YYYY ~');
+    return dayjs(date).tz(this.tz).format('~ dddd, D MMMM YYYY ~');
   },
   formatNumber: function(number) {
     // +12345678901 -> 234-567-8901
