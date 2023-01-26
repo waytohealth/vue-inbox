@@ -1,7 +1,8 @@
 <template>
-  <div class="component">
+  <div class="inbox-component">
+    <p>All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}</p>
     <div>
-      <div class="inbox">
+      <div class="inbox clearfix">
         <div v-if="store.loading.older" class="text-center">
           <b-spinner variant="primary" label="Spinning"/>
         </div>
