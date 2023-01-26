@@ -60,4 +60,8 @@ export default {
   max-width: 100%;
   max-height: 80vh;
 }
+.gallery-img {
+  max-width: 100%;
+  margin: 10px 0;
+}
 </style>
