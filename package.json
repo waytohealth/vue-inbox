@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "dayjs": "^1.11.4",
-    "vue": "2.6"
+    "emoji-regex": "^10.2.1",
+    "vue": "2.6",
+    "vue-emoji-picker": "^1.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

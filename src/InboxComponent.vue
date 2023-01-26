@@ -4,7 +4,7 @@
     <div>
       <div class="inbox clearfix">
         <div v-if="store.loading.older" class="text-center">
-          <b-spinner variant="primary" label="Spinning"/>
+          <b-spinner variant="primary" label="Spinning" />
         </div>
         <div v-for="(msgs, date) in messagesByDate" :key="date">
           <div class="date">
@@ -67,13 +67,9 @@
     />
 
     <div>
-      <textarea
+      <InputArea
         v-model="textContent"
-        rows="2"
-        cols="30"
-        class="form-control"
         :disabled="store.loading.send"
-        @input="resizeTextarea"
       />
       <input
         v-if="!store.loading.send"
@@ -106,10 +102,12 @@ import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import LazyImage from "./components/LazyImage";
 import ImageLightbox from "@/components/ImageLightbox.vue";
+import InputArea from "@/InputArea.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    InputArea,
     ImageLightbox,
     LazyImage
   },
@@ -212,11 +210,6 @@ export default {
     openImageLightbox(msgId, imageIndex) {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex);
-    },
-
-    resizeTextarea(event) {
-      event.target.style.height = "auto";
-      event.target.style.height = `${event.target.scrollHeight}px`;
     },
     scrollToBottom() {
       const el = this.$el.querySelector('.inbox');
@@ -364,10 +357,6 @@ div.sender {
 
 .status-icon {
   cursor: pointer;
-}
-
-textarea {
-  resize: none;
 }
 
 .cursor-pointer {
