@@ -54,19 +54,6 @@ let appState = {
   getImageUrl(msgId, imageIndex) {
     return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
   },
-  async loadParticipant() {
-    let auth = this.authCredentials();
-    let requestParams = Object.assign(auth, {
-      method: "GET"
-    });
-    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.limit})`;
-    let res = await fetch(url, requestParams);
-    if (!res.ok) {
-      throw new Error("womp");
-    }
-    const ppt = (await res.json()).data;
-    inboxHelper.setTimezone(ppt?.time_zone_name ?? "America/New_York");
-  },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {

@@ -188,7 +188,6 @@ export default {
     this.store.auth = this.auth;
 
     this.loading = true;
-    this.store.loadParticipant();
     this.store.loadMessages()
       .then(() => {
         this.loading = false;
