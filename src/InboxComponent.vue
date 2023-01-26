@@ -1,63 +1,119 @@
 <template>
   <div class="inbox-component">
-    <p>All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}</p>
+    <p>
+      All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}
+      <b-form-checkbox v-model="galleryView" class="float-right mr-2" switch>
+        Media View
+      </b-form-checkbox>
+    </p>
     <div>
       <div class="inbox clearfix">
         <div v-if="store.loading.older" class="text-center">
           <b-spinner variant="primary" label="Spinning" />
         </div>
-        <div v-for="(msgs, date) in messagesByDate" :key="date">
-          <div class="date">
-            {{ inboxHelper.formatDate(date) }}
-          </div>
+        <template v-if="!galleryView">
+          <div v-for="(msgs, date) in messagesByDate" :key="date">
+            <div class="date">
+              {{ inboxHelper.formatDate(date) }}
+            </div>
 
-          <div v-for="msg in msgs" :key="msg.id">
-            <div v-if="msg.sender" class="sender">
-              {{ msg.sender }}
-            </div>
-            <div class="message" :class="inboxHelper.messageClasses(msg)">
-              <span
-                v-b-tooltip.hover
-                class="time"
-                :title="inboxHelper.tooltipTime(msg)"
-              >{{ inboxHelper.messageTime(msg) }}</span>
-              <b-icon
-                :id="`icon-${msg.id}`"
-                class="status-icon"
-                :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
-                :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
-              />
-              <b-popover
-                :target="`icon-${msg.id}`"
-                title="Text Message Details"
-                triggers="click blur"
-                :placement="msg.direction === 'inbound' ? 'right' : 'left'"
-              >
-                <template #title>
-                  Text Message Details
-                </template>
-                <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
-                <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
-                <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
-                <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-              </b-popover>
-              {{ msg.message_text }}
-              <ul v-if="msg.media.length > 0" class="list-inline">
-                <li
-                  v-for="(media, idx) in msg.media"
-                  :key="media.sid"
-                  class="cursor-pointer"
+            <div v-for="msg in msgs" :key="msg.id">
+              <div v-if="msg.sender" class="sender">
+                {{ msg.sender }}
+              </div>
+              <div class="message" :class="inboxHelper.messageClasses(msg)">
+                <span
+                  v-b-tooltip.hover
+                  class="time"
+                  :title="inboxHelper.tooltipTime(msg)"
+                >{{ inboxHelper.messageTime(msg) }}</span>
+                <b-icon
+                  :id="`icon-${msg.id}`"
+                  class="status-icon"
+                  :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
+                  :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
+                />
+                <b-popover
+                  :target="`icon-${msg.id}`"
+                  title="Text Message Details"
+                  triggers="click blur"
+                  :placement="msg.direction === 'inbound' ? 'right' : 'left'"
                 >
-                  <LazyImage
-                    :store="store"
-                    :url="store.getImageUrl(msg.id, idx)"
-                    @click.native="openImageLightbox(msg.id, idx)"
-                  />
-                </li>
-              </ul>
+                  <template #title>
+                    Text Message Details
+                  </template>
+                  <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
+                  <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
+                  <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
+                  <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+                </b-popover>
+                {{ msg.message_text }}
+                <ul v-if="msg.media.length > 0" class="list-inline">
+                  <li
+                    v-for="(media, idx) in msg.media"
+                    :key="media.sid"
+                    class="cursor-pointer"
+                  >
+                    <LazyImage
+                      :store="store"
+                      :url="store.getImageUrl(msg.id, idx)"
+                      @click.native="openImageLightbox(msg.id, idx)"
+                    />
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-if="galleryView">
+          <div class="container gallery-view">
+            <div class="row row-cols-4">
+              <div class="col" v-for="msg in messagesWithImages" :key="msg.id">
+                <b-card class="h-100">
+                  <span
+                    v-b-tooltip.hover
+                    class="time"
+                    :title="inboxHelper.tooltipTime(msg)"
+                  >{{ inboxHelper.messageTime(msg) }}</span>
+                  <b-icon
+                    :id="`icon-${msg.id}`"
+                    class="status-icon"
+                    :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
+                    :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
+                  />
+                  <b-popover
+                    :target="`icon-${msg.id}`"
+                    title="Text Message Details"
+                    triggers="click blur"
+                    :placement="msg.direction === 'inbound' ? 'right' : 'left'"
+                  >
+                    <template #title>
+                      Text Message Details
+                    </template>
+                    <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
+                    <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
+                    <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
+                    <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+                  </b-popover>
+                  <ul class="list-inline">
+                    <li
+                      v-for="(media, idx) in msg.media"
+                      :key="media.sid"
+                      class="cursor-pointer"
+                    >
+                      <LazyImage
+                        :store="store"
+                        :url="store.getImageUrl(msg.id, idx)"
+                        @click.native="openImageLightbox(msg.id, idx)"
+                        image-class="gallery-img"
+                      />
+                    </li>
+                  </ul>
+                </b-card>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
     <ImageLightbox
@@ -182,6 +238,7 @@ export default {
       imageName: "",
       showImageUploader: false,
       showImageLightbox: false,
+      galleryView: false,
     }
   },
   computed: {
@@ -199,6 +256,9 @@ export default {
         }, {});
       }
       return [];
+    },
+    messagesWithImages() {
+      return Object.values(this.store.messagesObj).filter(msg => msg.media.length > 0).reverse();
     },
     latestMessageId() {
       return Math.max(...Object.keys(this.store.messagesObj));
@@ -406,5 +466,9 @@ div.sender {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.inbox .gallery-view .col {
+  padding: 0 5px;
 }
 </style>
