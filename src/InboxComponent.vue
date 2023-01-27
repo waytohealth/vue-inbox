@@ -2,7 +2,11 @@
   <div class="inbox-component">
     <p>
       All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}
-      <b-form-checkbox v-model="galleryView" class="float-right mr-2" switch>
+      <b-form-checkbox
+        v-model="galleryView"
+        class="float-right mr-2"
+        switch
+      >
         Media View
       </b-form-checkbox>
     </p>
@@ -11,109 +15,21 @@
         <div v-if="store.loading.older" class="text-center">
           <b-spinner variant="primary" label="Spinning" />
         </div>
-        <template v-if="!galleryView">
-          <div v-for="(msgs, date) in messagesByDate" :key="date">
-            <div class="date">
-              {{ inboxHelper.formatDate(date) }}
-            </div>
 
-            <div v-for="msg in msgs" :key="msg.id">
-              <div v-if="msg.sender" class="sender">
-                {{ msg.sender }}
-              </div>
-              <div class="message" :class="inboxHelper.messageClasses(msg)">
-                <span
-                  v-b-tooltip.hover
-                  class="time"
-                  :title="inboxHelper.tooltipTime(msg)"
-                >{{ inboxHelper.messageTime(msg) }}</span>
-                <b-icon
-                  :id="`icon-${msg.id}`"
-                  class="status-icon"
-                  :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
-                  :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
-                />
-                <b-popover
-                  :target="`icon-${msg.id}`"
-                  title="Text Message Details"
-                  triggers="click blur"
-                  :placement="msg.direction === 'inbound' ? 'right' : 'left'"
-                >
-                  <template #title>
-                    Text Message Details
-                  </template>
-                  <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
-                  <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
-                  <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
-                  <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-                </b-popover>
-                {{ msg.message_text }}
-                <ul v-if="msg.media.length > 0" class="list-inline">
-                  <li
-                    v-for="(media, idx) in msg.media"
-                    :key="media.sid"
-                    class="cursor-pointer"
-                  >
-                    <LazyImage
-                      :store="store"
-                      :url="store.getImageUrl(msg.id, idx)"
-                      @click.native="openImageLightbox(msg.id, idx)"
-                    />
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </template>
-        <template v-if="galleryView">
-          <div class="container gallery-view">
-            <div class="row row-cols-4">
-              <div class="col" v-for="msg in messagesWithImages" :key="msg.id">
-                <b-card class="h-100">
-                  <span
-                    v-b-tooltip.hover
-                    class="time"
-                    :title="inboxHelper.messageDetailTime(msg)"
-                  >{{ inboxHelper.messageDate(msg) }}</span>
-                  <b-icon
-                    :id="`icon-${msg.id}`"
-                    class="status-icon"
-                    :icon="getIconForStatus(inboxHelper.statusType(msg)).icon"
-                    :variant="getIconForStatus(inboxHelper.statusType(msg)).variant"
-                  />
-                  <b-popover
-                    :target="`icon-${msg.id}`"
-                    title="Text Message Details"
-                    triggers="click blur"
-                    placement="down"
-                  >
-                    <template #title>
-                      Text Message Details
-                    </template>
-                    <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
-                    <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
-                    <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
-                    <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-                  </b-popover>
-                  <ul class="list-inline">
-                    <li
-                      v-for="(media, idx) in msg.media"
-                      :key="media.sid"
-                      class="cursor-pointer"
-                    >
-                      <LazyImage
-                        :store="store"
-                        :url="store.getImageUrl(msg.id, idx)"
-                        @click.native="openImageLightbox(msg.id, idx)"
-                        image-class="gallery-img"
-                      />
-                    </li>
-                  </ul>
-                </b-card>
-              </div>
-            </div>
-          </div>
-        </template>
+        <GalleryView
+          v-if="galleryView"
+          :messages-with-images="messagesWithImages"
+          :store="store"
+          :inbox-helper="inboxHelper"
+          @openImageLightbox="openImageLightbox"
+        />
+        <MessageView
+          v-else
+          :messages-by-date="messagesByDate"
+          :inbox-helper="inboxHelper"
+          :store="store"
+          @openImageLightbox="openImageLightbox"
+        />
       </div>
     </div>
     <ImageLightbox
@@ -181,16 +97,18 @@
 import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
-import LazyImage from "./components/LazyImage";
-import ImageLightbox from "@/components/ImageLightbox.vue";
-import InputArea from "@/InputArea.vue";
+import ImageLightbox from "./components/ImageLightbox.vue";
+import InputArea from "./components/InputArea.vue";
+import GalleryView from "./components/GalleryView.vue";
+import MessageView from "./components/MessageView.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    GalleryView,
     InputArea,
     ImageLightbox,
-    LazyImage
+    MessageView,
   },
   props: {
     auth: {
@@ -348,25 +266,6 @@ export default {
         this.poll()
       }, 10000)
     },
-    getIconForStatus(status) {
-      switch (status) {
-        case "success":
-          return {
-            icon: 'check-lg',
-            variant: 'success',
-          }
-        case "failure":
-          return {
-            icon: 'exclamation-triangle-fill',
-            variant: 'danger',
-          }
-        case "unknown":
-          return {
-            icon: 'info-circle-fill',
-            variant: 'info',
-          }
-      }
-    }
   },
 }
 </script>
@@ -380,95 +279,17 @@ export default {
   border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
 
-.date {
-  clear: both;
-  font-size: 1.1em;
-  color: gray;
-  text-align: center;
-}
-
-.message {
-  position: relative;
-  display: inline-block;
-  min-width: 150px;
-  max-width: 450px;
-  padding: 10px 18px;
-  clear: both;
-  vertical-align: top;
-  border-radius: 5px;
-  -webkit-box-shadow: 0 0 6px #b2b2b2;
-  box-shadow: 0 0 6px #b2b2b2;
-}
-
-div.sender {
-  float: right;
-  margin: 0 20px 0 0;
-  clear: both;
-  font-size: 12px;
-  color: #6c6f76;
-}
-
-.inbound {
-  float: left;
-  margin: 5px 45px 5px 20px;
-  background-color: #bdf9bd;
-}
-
-.inbound::before {
-  left: -9px;
-  background-color: #bdf9bd;
-  -webkit-box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
-  box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
-}
-
-.message::before {
-  position: absolute;
-  top: 11px;
-  display: block;
-  width: 20px;
-  height: 16px;
-  content: "\00a0";
-  -webkit-transform: rotate(29deg) skew(-35deg);
-  -moz-transform: rotate(29deg) skew(-35deg);
-  -ms-transform: rotate(29deg) skew(-35deg);
-  -o-transform: rotate(29deg) skew(-35deg);
-  transform: rotate(29deg) skew(-35deg);
-}
-
-.outbound {
-  float: right;
-  margin: 5px 20px 5px 45px;
-}
-
-.outbound::before {
-  right: -9px;
-  -webkit-box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
-  box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
-}
-
-.outbound.automated, .outbound.automated::before {
-  background-color: #e0f1ff;
-}
-
-.outbound.manual, .outbound.manual::before {
-  background-color: #badfff;
-}
-
-.time {
+>>> .time {
   float: right;
   margin: 0 3px 0;
   color: gray;
 }
 
-.status-icon {
+>>> .status-icon {
   cursor: pointer;
 }
 
-.cursor-pointer {
+>>> .cursor-pointer {
   cursor: pointer;
-}
-
-.inbox .gallery-view .col {
-  padding: 0 5px;
 }
 </style>

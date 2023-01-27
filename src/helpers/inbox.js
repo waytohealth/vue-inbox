@@ -97,7 +97,27 @@ let helper = {
 
       return a.id > b.id ? 1:-1;
     });
+  },
+  getIconForStatus(status) {
+    switch (status) {
+      case "success":
+        return {
+          icon: 'check-lg',
+          variant: 'success',
+        }
+      case "failure":
+        return {
+          icon: 'exclamation-triangle-fill',
+          variant: 'danger',
+        }
+      case "unknown":
+        return {
+          icon: 'info-circle-fill',
+          variant: 'info',
+        }
+    }
   }
+
 }
 
 export default helper;
