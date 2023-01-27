@@ -37,6 +37,10 @@ let helper = {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).tz(this.tz).format('h:mm A');
   },
+  messageDate: function(msg) {
+    let datetime = msg.sent_at || msg.created_at;
+    return dayjs(datetime).tz(this.tz).format('M/D/YY');
+  },
   tooltipTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).tz(this.tz).format('h:mm:ss A z');
