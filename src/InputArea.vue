@@ -8,6 +8,20 @@
       :disabled="disabled"
       @input="$emit('input', $event.target.value)"
     />
+    <button
+      v-if="imageUploadEnabled"
+      class="image-upload-invoker"
+      @click.stop="$emit('openImageUpload')"
+    >
+      <svg
+        viewBox="0 0 1024 1024"
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 fill-current text-grey"
+      >
+        <path d="M96 896a32 32 0 01-32-32V160a32 32 0 0132-32h832a32 32 0 0132 32v704a32 32 0 01-32 32H96zm315.52-228.48l-68.928-68.928a32 32 0 00-45.248 0L128 768.064h778.688l-242.112-290.56a32 32 0 00-49.216 0L458.752 665.408a32 32 0 01-47.232 2.112zM256 384a96 96 0 10192.064-.064A96 96 0 00256 384z" />
+      </svg>
+    </button>
+
     <emoji-picker :search="search" @emoji="insertEmoji">
       <template #emoji-invoker="{ events: { click: clickEvent } }">
         <button
@@ -77,7 +91,11 @@ export default {
     value: {
       type: String,
       required: true
-    }
+    },
+    imageUploadEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -128,10 +146,9 @@ textarea {
   position: relative;
 }
 
-.emoji-invoker {
+.emoji-invoker, .image-upload-invoker {
   position: absolute;
   top: 0.5rem;
-  right: 0.5rem;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
@@ -141,12 +158,18 @@ textarea {
   background: transparent;
   border: 0;
 }
+.emoji-invoker {
+  right: 0.5rem;
+}
+.image-upload-invoker {
+  right: 2.5rem;
+}
 
-.emoji-invoker:hover {
+.emoji-invoker:hover, .image-upload-invoker:hover {
   transform: scale(1.1);
 }
 
-.emoji-invoker > svg {
+.emoji-invoker > svg, .image-upload-invoker > svg {
   fill: #b1c6d0;
 }
 

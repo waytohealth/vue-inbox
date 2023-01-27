@@ -7,16 +7,28 @@
         :study-id="studyId"
         :api-base-url="apiBaseUrl"
         :auth="auth"
-      />
+        :image-upload-enabled="true"
+      >
+        <template #imagePicker="{setImageUrl, isOpen, onClose}">
+          <ImagePicker
+            :is-open="isOpen"
+            @input="setImageUrl"
+            @closed="onClose"
+          />
+        </template>
+      </InboxComponent>
     </div>
   </div>
 </template>
 
 <script>
 import InboxComponent from "./InboxComponent";
+import ImagePicker from "@/ImagePicker.vue";
+
 export default {
   name: "InboxWrapper",
   components: {
+    ImagePicker,
     InboxComponent
   },
   data() {

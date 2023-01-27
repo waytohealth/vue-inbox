@@ -67,10 +67,21 @@
     />
 
     <div>
+      <slot
+        name="imagePicker"
+        :set-image-url="setImageUrl"
+        :on-close="() => showImageUploader = false"
+        :is-open="showImageUploader"
+      />
       <InputArea
         v-model="textContent"
         :disabled="store.loading.send"
+        :image-upload-enabled="imageUploadEnabled"
+        @openImageUpload="showImageUploader = true"
       />
+      <p v-if="imageUrl">
+        Will include image attachment of <code>{{ imageUrl }}</code>
+      </p>
       <input
         v-if="!store.loading.send"
         type="submit"
@@ -79,6 +90,7 @@
         :disabled="store.loading.send"
         @click="sendMessage"
       >
+
       <div
         v-else
         :class="styleConfig.inboxSubmit"
@@ -134,6 +146,10 @@ export default {
       type: Number,
       required: true
     },
+    imageUploadEnabled: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -149,6 +165,8 @@ export default {
       store: store,
       inboxHelper: inboxHelper,
       textContent: "",
+      imageUrl: "",
+      showImageUploader: false,
       showImageLightbox: false,
     }
   },
@@ -204,9 +222,15 @@ export default {
       this.scrolled = true;
     }
     this.handleTop();
-    this.poll();
+    // this.poll();
   },
   methods: {
+    setImageUrl(url) {
+      this.imageUrl = url;
+    },
+    openImageUpload() {
+      this.showImageUploader = true;
+    },
     openImageLightbox(msgId, imageIndex) {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex);
