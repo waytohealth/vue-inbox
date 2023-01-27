@@ -269,7 +269,7 @@ export default {
   methods: {
     openImageLightbox(msgId, imageIndex) {
       this.showImageLightbox = true;
-      this.$refs.imageLightbox.open(msgId, imageIndex);
+      this.$refs.imageLightbox.open(msgId, imageIndex, this.galleryView);
     },
     scrollToBottom() {
       const el = this.$el.querySelector('.inbox');

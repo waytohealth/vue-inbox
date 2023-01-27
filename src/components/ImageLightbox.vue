@@ -54,6 +54,7 @@ export default {
     return {
       msgId: null,
       imageIndex: null,
+      reverseDirection: false,
     }
   },
   computed: {
@@ -67,7 +68,7 @@ export default {
           })
         });
       })
-      return output;
+      return this.reverseDirection ? output.reverse() : output;
     },
     sentTime() {
       const msg = this.store.messagesObj[this.msgId];
@@ -99,10 +100,11 @@ export default {
     },
   },
   methods: {
-    open(msgId, imageIndex) {
+    open(msgId, imageIndex, reverseDirection) {
       // Called from parent component
       this.msgId = msgId;
       this.imageIndex = imageIndex;
+      this.reverseDirection = reverseDirection;
     },
     previousImage() {
       const x = this.images.findIndex(item =>
