@@ -140,12 +140,13 @@ let appState = {
     await this.fetchMessages(params, false);
     this.loading.older = false;
   },
-  async sendMessage(message) {
+  async sendMessage(message, imageUrl) {
     if (this.loading.send) {
       return false;
     }
     let body = {
-      message_text: message
+      message_text: message,
+      media_url: imageUrl,
     }
 
     let auth = this.authCredentials();
