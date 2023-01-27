@@ -69,19 +69,32 @@
     <div>
       <slot
         name="imagePicker"
-        :set-image-url="setImageUrl"
+        :attach-image="attachImage"
         :on-close="() => showImageUploader = false"
         :is-open="showImageUploader"
       />
       <InputArea
         v-model="textContent"
         :disabled="store.loading.send"
-        :image-upload-enabled="imageUploadEnabled"
+        :show-image-upload-invoker="imageUploadEnabled && !imageUrl"
         @openImageUpload="showImageUploader = true"
       />
-      <p v-if="imageUrl">
-        Will include image attachment of <code>{{ imageUrl }}</code>
-      </p>
+      <div v-if="imageUrl">
+        <h4>Attachments</h4>
+        <ul class="list-unstyled">
+          <li>
+            <span class="filename">{{ imageName }}</span>
+            <button
+              class="btn btn-link"
+              type="button"
+              @click="removeAttachment"
+            >
+              <span class="fa fa-trash text-danger" />
+              <span class="sr-only">Remove</span>
+            </button>
+          </li>
+        </ul>
+      </div>
       <input
         v-if="!store.loading.send"
         type="submit"
@@ -166,6 +179,7 @@ export default {
       inboxHelper: inboxHelper,
       textContent: "",
       imageUrl: "",
+      imageName: "",
       showImageUploader: false,
       showImageLightbox: false,
     }
@@ -225,8 +239,13 @@ export default {
     // this.poll();
   },
   methods: {
-    setImageUrl(url) {
+    attachImage(url, name = "Attachment") {
       this.imageUrl = url;
+      this.imageName = name;
+    },
+    removeAttachment() {
+      this.imageUrl = '';
+      this.imageName = '';
     },
     openImageUpload() {
       this.showImageUploader = true;

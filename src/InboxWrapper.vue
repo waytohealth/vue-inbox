@@ -9,10 +9,10 @@
         :auth="auth"
         :image-upload-enabled="true"
       >
-        <template #imagePicker="{setImageUrl, isOpen, onClose}">
+        <template #imagePicker="{attachImage, isOpen, onClose}">
           <ImagePicker
             :is-open="isOpen"
-            @input="setImageUrl"
+            @input="attachImage"
             @closed="onClose"
           />
         </template>

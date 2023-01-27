@@ -9,7 +9,7 @@
       @input="$emit('input', $event.target.value)"
     />
     <button
-      v-if="imageUploadEnabled"
+      v-if="showImageUploadInvoker"
       class="image-upload-invoker"
       @click.stop="$emit('openImageUpload')"
     >
@@ -92,7 +92,7 @@ export default {
       type: String,
       required: true
     },
-    imageUploadEnabled: {
+    showImageUploadInvoker: {
       type: Boolean,
       default: false,
     },

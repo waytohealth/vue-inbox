@@ -67,11 +67,11 @@ textarea. In addition, pass a named `imagePicker` template containing the actual
 
 The slot is passed the following props:
 
-| Name          | Type                    | Description                                                                                                                    |
-|---------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `isOpen`      | `Boolean`               | Will be false initially, will be flipped to true when the image picker should open                                             |
-| `setImageUrl` | `Function(url: string)` | Call this with the URL of the image when done. This must be a publicly accessible URL reachable by Twilio.                     |
-| `onClose`     | `Function`              | Call this when the image picker is closed. Sets `isOpen` to false. This is necessary, otherwise the image picker can't reopen. |
+| Name          | Type                  | Description                                                                                                                      |
+|---------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `isOpen`      | `Boolean`             | Will be false initially, will be flipped to true when the image picker should open                                               |
+| `attachImage` | `Function(url, name)` | Call this with the URL (and optionally name) of the image when done. This must be a publicly accessible URL reachable by Twilio. |
+| `onClose`     | `Function`            | Call this when the image picker is closed. Sets `isOpen` to false. This is necessary, otherwise the image picker can't reopen.   |
 
 You can find an example of usage in `InboxWrapper.vue` and `ImagePicker.vue`.
 
