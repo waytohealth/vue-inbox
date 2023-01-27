@@ -67,10 +67,34 @@
     />
 
     <div>
+      <slot
+        name="imagePicker"
+        :attach-image="attachImage"
+        :on-close="() => showImageUploader = false"
+        :is-open="showImageUploader"
+      />
       <InputArea
         v-model="textContent"
         :disabled="store.loading.send"
+        :show-image-upload-invoker="imageUploadEnabled && !imageUrl"
+        @openImageUpload="showImageUploader = true"
       />
+      <div v-if="imageUrl">
+        <h4>Attachments</h4>
+        <ul class="list-unstyled">
+          <li>
+            <span class="filename">{{ imageName }}</span>
+            <button
+              class="btn btn-link"
+              type="button"
+              @click="removeAttachment"
+            >
+              <span class="fa fa-trash text-danger" />
+              <span class="sr-only">Remove</span>
+            </button>
+          </li>
+        </ul>
+      </div>
       <input
         v-if="!store.loading.send"
         type="submit"
@@ -79,6 +103,7 @@
         :disabled="store.loading.send"
         @click="sendMessage"
       >
+
       <div
         v-else
         :class="styleConfig.inboxSubmit"
@@ -134,6 +159,10 @@ export default {
       type: Number,
       required: true
     },
+    imageUploadEnabled: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -149,6 +178,9 @@ export default {
       store: store,
       inboxHelper: inboxHelper,
       textContent: "",
+      imageUrl: "",
+      imageName: "",
+      showImageUploader: false,
       showImageLightbox: false,
     }
   },
@@ -204,9 +236,20 @@ export default {
       this.scrolled = true;
     }
     this.handleTop();
-    this.poll();
+    // this.poll();
   },
   methods: {
+    attachImage(url, name = "Attachment") {
+      this.imageUrl = url;
+      this.imageName = name;
+    },
+    removeAttachment() {
+      this.imageUrl = '';
+      this.imageName = '';
+    },
+    openImageUpload() {
+      this.showImageUploader = true;
+    },
     openImageLightbox(msgId, imageIndex) {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex);
@@ -231,10 +274,12 @@ export default {
       }
     },
     async sendMessage() {
-      if (this.textContent.length) {
-        await this.store.sendMessage(this.textContent);
+      if (this.textContent.length || this.imageUrl) {
+        await this.store.sendMessage(this.textContent, this.imageUrl);
         this.scrollToBottom();
         this.textContent = "";
+        this.imageUrl = '';
+        this.imageName = '';
       }
     },
     poll() {
