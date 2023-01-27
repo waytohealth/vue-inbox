@@ -73,8 +73,8 @@
                   <span
                     v-b-tooltip.hover
                     class="time"
-                    :title="inboxHelper.tooltipTime(msg)"
-                  >{{ inboxHelper.messageTime(msg) }}</span>
+                    :title="inboxHelper.messageDetailTime(msg)"
+                  >{{ inboxHelper.messageDate(msg) }}</span>
                   <b-icon
                     :id="`icon-${msg.id}`"
                     class="status-icon"
@@ -85,7 +85,7 @@
                     :target="`icon-${msg.id}`"
                     title="Text Message Details"
                     triggers="click blur"
-                    :placement="msg.direction === 'inbound' ? 'right' : 'left'"
+                    placement="down"
                   >
                     <template #title>
                       Text Message Details
