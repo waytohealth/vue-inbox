@@ -155,12 +155,10 @@ export default {
       });
     },
     galleryView(newVal) {
-      // scroll to newest when changing back to message view
-      if (!newVal) {
-        this.$nextTick(() => {
-          this.scrollToNewest();
-        });
-      }
+      // scroll to newest when changing views
+      this.$nextTick(() => {
+        this.scrollToNewest();
+      });
     }
   },
   async created() {
