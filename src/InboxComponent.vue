@@ -261,7 +261,7 @@ export default {
     async sendMessage() {
       if (this.textContent.length) {
         await this.store.sendMessage(this.textContent);
-        this.scrollToBottom();
+        this.scrollToNewest();
         this.textContent = "";
         this.imageUrl = '';
         this.imageName = '';
