@@ -12,16 +12,13 @@
     </p>
     <div>
       <div class="inbox clearfix">
-        <div v-if="store.loading.older" class="text-center">
-          <b-spinner variant="primary" label="Spinning" />
-        </div>
-
         <GalleryView
           v-if="galleryView"
           :messages-with-images="messagesWithImages"
           :store="store"
           :inbox-helper="inboxHelper"
           @openImageLightbox="openImageLightbox"
+          :show-load-more="store.loading.older"
         />
         <MessageView
           v-else
@@ -29,6 +26,7 @@
           :inbox-helper="inboxHelper"
           :store="store"
           @openImageLightbox="openImageLightbox"
+          :show-load-more="store.loading.older"
         />
       </div>
     </div>
@@ -133,10 +131,6 @@ export default {
       type: Number,
       required: true
     },
-    imageUploadEnabled: {
-      type: Boolean,
-      default: false,
-    },
     styles: {
       type: Object,
       required: false,
@@ -185,9 +179,17 @@ export default {
   watch: {
     latestMessageId() {
       this.$nextTick(() => {
-        this.scrollToBottom();
+        this.scrollToNewest();
       });
     },
+    galleryView(newVal) {
+      // scroll to newest when changing back to message view
+      if (!newVal) {
+        this.$nextTick(() => {
+          this.scrollToNewest();
+        });
+      }
+    }
   },
   async created() {
     this.store.apiBaseUrl = this.apiBaseUrl;
@@ -199,7 +201,7 @@ export default {
     this.store.loadMessages()
       .then(() => {
         this.loading = false;
-        this.scrollToBottom();
+        this.scrollToNewest();
       }).catch((e) => {
       // TODO: proper error handling
       console.log(e);
@@ -210,11 +212,11 @@ export default {
     // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
     // it should stay where we were
     if (!this.scrolled) {
-      this.scrollToBottom();
+      this.scrollToNewest();
       this.scrolled = true;
     }
-    this.handleTop();
-    // this.poll();
+    this.handleLoadMore();
+    this.poll();
   },
   methods: {
     attachImage(url, name = "Attachment") {
@@ -232,28 +234,35 @@ export default {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex, this.galleryView);
     },
-    scrollToBottom() {
+    scrollToNewest() {
       const el = this.$el.querySelector('.inbox');
+      const scrollToOffset = this.galleryView ? 0 : el.scrollHeight;
       if (el.scrollTo) {
-        el.scrollTo({top: el.scrollHeight, behavior: 'smooth'});
+        el.scrollTo({top: scrollToOffset, behavior: 'smooth'});
       } else {
         // IE fallback
-        el.scrollTop = el.scrollHeight;
+        el.scrollTop = scrollToOffset;
       }
     },
-    handleTop() {
+    handleLoadMore() {
       let inboxDiv = this.$el?.querySelector('.inbox');
       inboxDiv.onscroll = () => {
         if (inboxDiv) {
-          if (inboxDiv.scrollTop === 0) {
-            store.loadOlder();
+          if (this.galleryView) {
+            if (inboxDiv.scrollTop >= inboxDiv.scrollHeight - inboxDiv.clientHeight - 1) {
+              store.loadOlder();
+            }
+          } else {
+            if (inboxDiv.scrollTop === 0) {
+              store.loadOlder();
+            }
           }
         }
       }
     },
     async sendMessage() {
-      if (this.textContent.length || this.imageUrl) {
-        await this.store.sendMessage(this.textContent, this.imageUrl);
+      if (this.textContent.length) {
+        await this.store.sendMessage(this.textContent);
         this.scrollToBottom();
         this.textContent = "";
         this.imageUrl = '';

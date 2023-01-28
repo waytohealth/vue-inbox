@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="showLoadMore" class="text-center">
+      <b-spinner variant="primary" label="Spinning" />
+    </div>
     <div v-for="(msgs, date) in messagesByDate" :key="date">
       <div class="date">
         {{ inboxHelper.formatDate(date) }}
@@ -75,6 +78,10 @@ export default {
     store: {
       type: Object,
       required: true
+    },
+    showLoadMore: {
+      type: Boolean,
+      required: false
     }
   }
 }

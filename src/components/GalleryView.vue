@@ -4,9 +4,9 @@
       <div
         v-for="msg in messagesWithImages"
         :key="msg.id"
-        class="col"
+        class="col mb-2"
       >
-        <b-card class="h-100">
+        <b-card class="h-100 ">
           <span
             v-b-tooltip.hover
             class="time"
@@ -49,6 +49,9 @@
         </b-card>
       </div>
     </div>
+    <div :class="{'invisible': !showLoadMore }" class="text-center">
+      <b-spinner variant="primary" label="Spinning" />
+    </div>
   </div>
 </template>
 
@@ -72,8 +75,11 @@ export default {
     store: {
       type: Object,
       required: true
+    },
+    showLoadMore: {
+      type: Boolean,
+      required: false
     }
-
   }
 }
 </script>
