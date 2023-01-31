@@ -131,6 +131,10 @@ export default {
       type: Number,
       required: true
     },
+    imageUploadEnabled: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -195,15 +199,12 @@ export default {
     this.store.studyId = this.studyId;
     this.store.auth = this.auth;
 
-    this.loading = true;
     this.store.loadMessages()
       .then(() => {
-        this.loading = false;
         this.scrollToNewest();
       }).catch((e) => {
       // TODO: proper error handling
       console.log(e);
-      this.loading = false;
     });
   },
   mounted() {

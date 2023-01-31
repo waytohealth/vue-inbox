@@ -10,5 +10,6 @@ module.exports = {
     }],
     "vue/eqeqeq": ["warn", "always"],
     "eqeqeq": ["warn", "always"],
+    "vue/no-undef-properties": ["error"]
   }
 }
