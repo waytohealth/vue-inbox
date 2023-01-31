@@ -17,16 +17,16 @@
           :messages-with-images="messagesWithImages"
           :store="store"
           :inbox-helper="inboxHelper"
-          @openImageLightbox="openImageLightbox"
           :show-load-more="store.loading.older"
+          @openImageLightbox="openImageLightbox"
         />
         <MessageView
           v-else
           :messages-by-date="messagesByDate"
           :inbox-helper="inboxHelper"
           :store="store"
-          @openImageLightbox="openImageLightbox"
           :show-load-more="store.loading.older"
+          @openImageLightbox="openImageLightbox"
         />
       </div>
     </div>
@@ -182,7 +182,7 @@ export default {
         this.scrollToNewest();
       });
     },
-    galleryView(newVal) {
+    galleryView() {
       // scroll to newest when changing views
       this.$nextTick(() => {
         this.scrollToNewest();
