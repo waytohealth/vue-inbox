@@ -37,6 +37,10 @@ let helper = {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).tz(this.tz).format('h:mm A');
   },
+  messageDate: function(msg) {
+    let datetime = msg.sent_at || msg.created_at;
+    return dayjs(datetime).tz(this.tz).format('M/D/YY');
+  },
   tooltipTime: function(msg) {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).tz(this.tz).format('h:mm:ss A z');
@@ -93,7 +97,27 @@ let helper = {
 
       return a.id > b.id ? 1:-1;
     });
+  },
+  getIconForStatus(status) {
+    switch (status) {
+      case "success":
+        return {
+          icon: 'check-lg',
+          variant: 'success',
+        }
+      case "failure":
+        return {
+          icon: 'exclamation-triangle-fill',
+          variant: 'danger',
+        }
+      case "unknown":
+        return {
+          icon: 'info-circle-fill',
+          variant: 'info',
+        }
+    }
   }
+
 }
 
 export default helper;
