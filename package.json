@@ -12,6 +12,7 @@
     "serve": "vue-cli-service serve",
     "prebuild": "rimraf ./dist",
     "lint": "eslint --ext .js,.vue src",
+    "prepublish": "yarn build",
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
     "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
@@ -66,5 +67,5 @@
     },
     "rules": {}
   },
-  "version": "0.3.0-rc.2"
+  "version": "0.3.0-rc.3"
 }
