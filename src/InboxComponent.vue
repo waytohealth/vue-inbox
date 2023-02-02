@@ -260,8 +260,8 @@ export default {
       }
     },
     async sendMessage() {
-      if (this.textContent.length) {
-        await this.store.sendMessage(this.textContent);
+      if (this.textContent.length || this.imageUrl) {
+        await this.store.sendMessage(this.textContent, this.imageUrl);
         this.scrollToNewest();
         this.textContent = "";
         this.imageUrl = '';
