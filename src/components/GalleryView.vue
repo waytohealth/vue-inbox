@@ -1,12 +1,12 @@
 <template>
   <div class="container gallery-view">
-    <div class="row row-cols-4">
+    <div class="row row-cols-2 row-cols-md-4">
       <div
         v-for="msg in messagesWithImages"
         :key="msg.id"
         class="col mb-2"
       >
-        <b-card class="h-100 ">
+        <b-card class="h-100" body-class="p-0 p-sm-1 p-md-3">
           <span
             v-b-tooltip.hover
             class="time"
