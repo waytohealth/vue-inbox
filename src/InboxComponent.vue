@@ -1,7 +1,6 @@
 <template>
   <div class="inbox-component">
-    <p>
-      All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}
+    <div class="float-right">
       <b-form-checkbox
         v-model="galleryView"
         class="float-right mr-2"
@@ -9,6 +8,9 @@
       >
         Media View
       </b-form-checkbox>
+    </div>
+    <p>
+      All texts are displayed in the participant's current time zone: {{ inboxHelper.getFriendlyTimezoneName() }}
     </p>
     <div>
       <div class="inbox clearfix">
