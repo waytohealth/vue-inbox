@@ -42,7 +42,7 @@
                 :store="store"
                 :url="store.getImageUrl(msg.id, idx)"
                 image-class="gallery-img"
-                @click.native="$emit('openImageLightbox', [msg.id, idx])"
+                @click.native="$emit('openImageLightbox', msg.id, idx)"
               />
             </li>
           </ul>
