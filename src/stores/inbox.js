@@ -13,7 +13,7 @@ let appState = {
   meta: {
     lastUpdated: null,
     oldest: null,
-    limit: 20
+    pageSize: 50
   },
   loading: {
     older: false,
@@ -64,7 +64,7 @@ let appState = {
       study_id: this.studyId,
       participant_id: this.participantId,
       order_by: 'desc(id)',
-      per_page: this.meta.limit
+      per_page: this.meta.pageSize
     }, params));
 
     let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+search, requestParams);
@@ -103,7 +103,7 @@ let appState = {
     let requestParams = Object.assign(auth, {
       method: "GET"
     });
-    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.limit})`;
+    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.pageSize})`;
     let res = await fetch(url, requestParams);
     if (!res.ok) {
       throw new Error("womp");
