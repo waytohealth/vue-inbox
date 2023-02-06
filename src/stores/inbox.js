@@ -30,7 +30,7 @@ let appState = {
     } else if (this.auth.apiKey.length > 0) {
       return {
         headers: new Headers({
-          'Authorization': 'Bearer '+ this.auth.apiKey,
+          'Authorization': 'Bearer ' + this.auth.apiKey,
         })
       }
     }
@@ -54,6 +54,36 @@ let appState = {
   getImageUrl(msgId, imageIndex) {
     return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
   },
+  async enableManualMode() {
+    const requestParams = Object.assign(
+      this.authCredentials(),
+      {
+        method: "POST",
+        body: JSON.stringify({
+          mode: "Manual",
+          duration_mins: 15
+        })
+      }
+    );
+
+    const res = await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+    // TODO setManualTimer(res.data.expires_at);
+    return res;
+  },
+  async disableManualMode() {
+    const requestParams = Object.assign(
+      this.authCredentials(),
+      {
+        method: "PATCH",
+        body: JSON.stringify([
+          {op: "end"}
+        ])
+      }
+    );
+    // TODO clearManualTimer();
+
+    return fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+  },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
@@ -67,7 +97,7 @@ let appState = {
       per_page: this.meta.pageSize
     }, params));
 
-    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+search, requestParams);
+    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?` + search, requestParams);
 
     if (!res.ok) {
       throw new Error("womp");

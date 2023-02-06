@@ -8,6 +8,8 @@
         :api-base-url="apiBaseUrl"
         :auth="auth"
         :image-upload-enabled="true"
+        :poll-frequency-seconds="999999"
+        :manual-mode-enabled="true"
       >
         <template #imagePicker="{attachImage, isOpen, onClose}">
           <ImagePicker

@@ -1,5 +1,9 @@
 <template>
   <div class="inbox-component">
+    <ManualModeToggle
+      v-if="manualModeEnabled"
+      :store="store"
+    />
     <div class="float-right">
       <b-form-checkbox
         v-model="galleryView"
@@ -101,10 +105,12 @@ import ImageLightbox from "./components/ImageLightbox.vue";
 import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
 import MessageView from "./components/MessageView.vue";
+import ManualModeToggle from "@/components/ManualModeToggle.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    ManualModeToggle,
     GalleryView,
     InputArea,
     ImageLightbox,
@@ -121,6 +127,11 @@ export default {
         }
       }
     },
+    pollFrequencySeconds: {
+      type: Number,
+      required: false,
+      default: 10,
+    },
     apiBaseUrl: {
       type: String,
       required: true
@@ -134,6 +145,10 @@ export default {
       required: true
     },
     imageUploadEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    manualModeEnabled: {
       type: Boolean,
       default: false,
     },
@@ -274,7 +289,7 @@ export default {
       setTimeout(() => {
         this.store.poll();
         this.poll()
-      }, 10000)
+      }, this.pollFrequencySeconds * 1000)
     },
   },
 }
