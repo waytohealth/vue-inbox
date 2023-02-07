@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import inboxHelper from '../helpers/inbox';
+import manualModeHelper from '../helpers/manualMode';
 
 let appState = {
   messagesObj: {},
@@ -68,7 +69,9 @@ let appState = {
 
     const res = await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
     // TODO setManualTimer(res.data.expires_at);
-    return res;
+
+    // reload participant state including messaging mode and conversations
+    return this.loadMessages();
   },
   async disableManualMode() {
     const requestParams = Object.assign(
@@ -82,7 +85,9 @@ let appState = {
     );
     // TODO clearManualTimer();
 
-    return fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+    await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+    // reload participant state including messaging mode and conversations
+    return this.loadMessages();
   },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
@@ -133,13 +138,15 @@ let appState = {
     let requestParams = Object.assign(auth, {
       method: "GET"
     });
-    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.pageSize})`;
+    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.pageSize}),messaging_mode_session,current_conversation`;
     let res = await fetch(url, requestParams);
     if (!res.ok) {
       throw new Error("womp");
     }
     const ppt = (await res.json()).data;
     inboxHelper.setTimezone(ppt?.time_zone_name ?? "America/New_York");
+    manualModeHelper.setCurrentSession(ppt?.messaging_mode_session);
+    manualModeHelper.setCurrentConversation(ppt?.current_conversation);
     this.pullMessagesFromData(ppt.text_messages, true);
 
     this.loading.initial = false;

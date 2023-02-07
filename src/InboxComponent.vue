@@ -40,6 +40,7 @@
     <ManualModeToggle
       v-if="manualModeEnabled"
       :store="store"
+      :helper="manualModeHelper"
     />
 
     <div>
@@ -101,6 +102,7 @@
 import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
+import manualModeHelper from './helpers/manualMode';
 import ImageLightbox from "./components/ImageLightbox.vue";
 import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
@@ -164,8 +166,9 @@ export default {
     return {
       scrolled: false,
       styleConfig: Object.assign(styles, this.styles),
-      store: store,
-      inboxHelper: inboxHelper,
+      store,
+      inboxHelper,
+      manualModeHelper,
       textContent: "",
       imageUrl: "",
       imageName: "",
