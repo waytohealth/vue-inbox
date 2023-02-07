@@ -133,12 +133,31 @@ let appState = {
       return false;
     }
     this.loading.initial = true;
-    // use the participants endpoint for the initial load so we can also get info about them
+    await this.loadMessagesViaParticipantApi(`limit(${this.meta.pageSize})`);
+    this.loading.initial = false;
+  },
+  async poll() {
+    if (this.loading.polling) {
+      return false;
+    }
+
+    this.loading.polling = true;
+    await this.loadMessagesViaParticipantApi(`updatedAfter(${this.meta.lastUpdated})`)
+    this.loading.polling = false;
+  },
+  async loadMessagesViaParticipantApi(textMessageCriteria) {
+    // use the participants endpoint for the initial load and when polling, so we get info on timezone, conversations,
+    // and messaging mode
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
       method: "GET"
     });
-    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.pageSize}),messaging_mode_session,current_conversation`;
+    const includes = [
+      `text_messages:${textMessageCriteria}`,
+      'messaging_mode_session',
+      'current_conversation',
+    ];
+    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=${includes.join(',')}`;
     let res = await fetch(url, requestParams);
     if (!res.ok) {
       throw new Error("womp");
@@ -149,20 +168,6 @@ let appState = {
     manualModeHelper.setCurrentConversation(ppt?.current_conversation);
     this.pullMessagesFromData(ppt.text_messages, true);
 
-    this.loading.initial = false;
-  },
-  async poll() {
-    if (this.loading.polling) {
-      return false;
-    }
-
-    let params = {
-      updated_at: 'after(' + this.meta.lastUpdated + ')',
-    };
-
-    this.loading.polling = true;
-    await this.fetchMessages(params);
-    this.loading.polling = false;
   },
   async loadOlder() {
     if (this.loading.older) {
