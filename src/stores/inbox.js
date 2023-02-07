@@ -66,9 +66,7 @@ let appState = {
         })
       }
     );
-
-    const res = await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
-    // TODO setManualTimer(res.data.expires_at);
+    await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
 
     // reload participant state including messaging mode and conversations
     return this.loadMessages();
@@ -83,7 +81,6 @@ let appState = {
         ])
       }
     );
-    // TODO clearManualTimer();
 
     await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
     // reload participant state including messaging mode and conversations
