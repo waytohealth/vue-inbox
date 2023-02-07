@@ -1,9 +1,5 @@
 <template>
   <div class="inbox-component">
-    <ManualModeToggle
-      v-if="manualModeEnabled"
-      :store="store"
-    />
     <div class="float-right">
       <b-form-checkbox
         v-model="galleryView"
@@ -39,6 +35,10 @@
     <ImageLightbox
       ref="imageLightbox"
       v-model="showImageLightbox"
+      :store="store"
+    />
+    <ManualModeToggle
+      v-if="manualModeEnabled"
       :store="store"
     />
 
