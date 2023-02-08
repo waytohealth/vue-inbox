@@ -289,17 +289,17 @@ export default {
   border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
 
->>> .time {
+/deep/ .time {
   float: right;
   margin: 0 3px 0;
   color: gray;
 }
 
->>> .status-icon {
+/deep/ .status-icon {
   cursor: pointer;
 }
 
->>> .cursor-pointer {
+/deep/ .cursor-pointer {
   cursor: pointer;
 }
 </style>
