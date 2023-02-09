@@ -15,7 +15,7 @@
       v-if="value"
       :key="`${msgId}_${imageIndex}`"
       :store="store"
-      image-class="modal-img"
+      context="modal"
       :url="store.getImageUrl(msgId, imageIndex)"
     />
     <span

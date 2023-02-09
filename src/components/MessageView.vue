@@ -46,6 +46,7 @@
               class="cursor-pointer"
             >
               <LazyImage
+                context="inbox"
                 :store="store"
                 :url="store.getImageUrl(msg.id, idx)"
                 @click.native="$emit('openImageLightbox', msg.id, idx)"

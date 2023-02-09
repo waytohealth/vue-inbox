@@ -41,7 +41,7 @@
               <LazyImage
                 :store="store"
                 :url="store.getImageUrl(msg.id, idx)"
-                image-class="gallery-img"
+                context="gallery"
                 @click.native="$emit('openImageLightbox', msg.id, idx)"
               />
             </li>
