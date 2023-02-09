@@ -12,12 +12,13 @@
             class="time"
             :title="inboxHelper.messageDetailTime(msg)"
           >{{ inboxHelper.messageDate(msg) }}</span>
-          <b-icon
-            :id="`icon-${msg.id}`"
-            class="status-icon"
-            :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
-            :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
-          />
+          <span class="status-icon">
+            <b-icon
+              :id="`icon-${msg.id}`"
+              :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
+              :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
+            />
+          </span>
           <b-popover
             :target="`icon-${msg.id}`"
             title="Text Message Details"

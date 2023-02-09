@@ -69,7 +69,7 @@
 </template>
 <script>
 import {EmojiPicker} from 'vue-emoji-picker'
-import emojiRegex from "emoji-regex";
+import {isJustEmoji} from '@/helpers/emojiHelper'
 
 export default {
   name: 'InputArea',
@@ -124,9 +124,8 @@ export default {
     },
     resizeTextarea(newVal) {
       const textarea = this.$refs.textarea;
-      const justEmojiRegex = new RegExp(`^((${emojiRegex().source})|[ \n])+$`)
       textarea.style.height = "auto"; // reset
-      textarea.style.fontSize = justEmojiRegex.test(newVal) ? '1.8rem' : null;
+      textarea.style.fontSize = isJustEmoji(newVal) ? '1.8rem' : null;
       textarea.style.height = `${textarea.scrollHeight}px`;
     },
   },

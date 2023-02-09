@@ -18,12 +18,13 @@
             class="time"
             :title="inboxHelper.tooltipTime(msg)"
           >{{ inboxHelper.messageTime(msg) }}</span>
-          <b-icon
-            :id="`icon-${msg.id}`"
-            class="status-icon"
-            :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
-            :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
-          />
+          <span class="status-icon">
+            <b-icon
+              :id="`icon-${msg.id}`"
+              :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
+              :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
+            />
+          </span>
           <b-popover
             :target="`icon-${msg.id}`"
             title="Text Message Details"
@@ -38,7 +39,10 @@
             <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
             <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
           </b-popover>
-          {{ msg.message_text }}
+          <span :class="{'emojiOnly': isJustEmoji(msg.message_text)}">
+            {{ msg.message_text }}
+          </span>
+
           <ul v-if="msg.media.length > 0" class="list-inline">
             <li
               v-for="(media, idx) in msg.media"
@@ -61,6 +65,7 @@
 
 <script>
 import LazyImage from "@/components/LazyImage.vue";
+import {isJustEmoji} from "@/helpers/emojiHelper";
 
 export default {
   name: "GalleryView",
@@ -84,6 +89,11 @@ export default {
       type: Boolean,
       required: false
     }
+  },
+  data() {
+    return {
+      isJustEmoji
+    };
   }
 }
 </script>
@@ -106,6 +116,10 @@ export default {
   border-radius: 5px;
   -webkit-box-shadow: 0 0 6px #b2b2b2;
   box-shadow: 0 0 6px #b2b2b2;
+}
+
+.emojiOnly {
+  font-size: 1.8em;
 }
 
 div.sender {

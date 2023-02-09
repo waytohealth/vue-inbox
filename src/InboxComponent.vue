@@ -296,7 +296,9 @@ export default {
 }
 
 /deep/ .status-icon {
+  float: left;
   cursor: pointer;
+  margin: 0 3px 0;
 }
 
 /deep/ .cursor-pointer {
