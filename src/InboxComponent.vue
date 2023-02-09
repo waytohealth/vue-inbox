@@ -185,7 +185,7 @@ export default {
   watch: {
     latestMessageId() {
       this.$nextTick(() => {
-        this.scrollToNewest();
+        this.scrollToNewest('smooth');
       });
     },
     galleryView() {
@@ -235,11 +235,11 @@ export default {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex, this.galleryView);
     },
-    scrollToNewest() {
+    scrollToNewest(behavior = 'auto') {
       const el = this.$el.querySelector('.inbox');
       const scrollToOffset = this.galleryView ? 0 : el.scrollHeight;
       if (el.scrollTo) {
-        el.scrollTo({top: scrollToOffset, behavior: 'smooth'});
+        el.scrollTo({top: scrollToOffset, behavior: behavior});
       } else {
         // IE fallback
         el.scrollTop = scrollToOffset;
@@ -264,7 +264,7 @@ export default {
     async sendMessage() {
       if (this.textContent.length || this.imageUrl) {
         await this.store.sendMessage(this.textContent, this.imageUrl);
-        this.scrollToNewest();
+        this.scrollToNewest('smooth');
         this.textContent = "";
         this.imageUrl = '';
         this.imageName = '';
