@@ -15,17 +15,20 @@ export default {
   },
 
   get isManualModeActive() {
-    return !!this.session?.id;
+    return this.session?.mode === 'Manual';
+  },
+  get isAutomatedModeActive() {
+    return this.session?.mode === 'Automated';
   },
   get manualModeExpiration() {
-    if (this.session) {
+    if (this.session?.mode === 'Manual') {
       let datetime = this.session.expires_at;
       return dayjs(datetime).format('h:mm:ss A z');
     }
   },
-  get manualModeTimeRemaining() {
-    if (this.session) {
-      let datetime = this.session.expires_at;
+  get sessionTimeRemaining() {
+    if (this.session?.expires_at) {
+      const datetime = this.session.expires_at;
       return dayjs(datetime).fromNow(true);
     }
   },
