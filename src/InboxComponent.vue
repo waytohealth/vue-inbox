@@ -37,6 +37,11 @@
       v-model="showImageLightbox"
       :store="store"
     />
+    <ManualModeToggle
+      v-if="manualModeEnabled"
+      :store="store"
+      :helper="manualModeHelper"
+    />
 
     <div>
       <slot
@@ -97,14 +102,17 @@
 import store from './stores/inbox';
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
+import manualModeHelper from './helpers/manualMode';
 import ImageLightbox from "./components/ImageLightbox.vue";
 import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
 import MessageView from "./components/MessageView.vue";
+import ManualModeToggle from "@/components/ManualModeToggle.vue";
 
 export default {
   name: "InboxComponent",
   components: {
+    ManualModeToggle,
     GalleryView,
     InputArea,
     ImageLightbox,
@@ -120,6 +128,11 @@ export default {
           apiKey: ""
         }
       }
+    },
+    pollFrequencySeconds: {
+      type: Number,
+      required: false,
+      default: 10,
     },
     apiBaseUrl: {
       type: String,
@@ -137,6 +150,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    manualModeEnabled: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -149,8 +166,9 @@ export default {
     return {
       scrolled: false,
       styleConfig: Object.assign(styles, this.styles),
-      store: store,
-      inboxHelper: inboxHelper,
+      store,
+      inboxHelper,
+      manualModeHelper,
       textContent: "",
       imageUrl: "",
       imageName: "",
@@ -274,7 +292,7 @@ export default {
       setTimeout(() => {
         this.store.poll();
         this.poll()
-      }, 10000)
+      }, this.pollFrequencySeconds * 1000)
     },
   },
 }

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import inboxHelper from '../helpers/inbox';
+import manualModeHelper from '../helpers/manualMode';
 
 let appState = {
   messagesObj: {},
@@ -30,7 +31,7 @@ let appState = {
     } else if (this.auth.apiKey.length > 0) {
       return {
         headers: new Headers({
-          'Authorization': 'Bearer '+ this.auth.apiKey,
+          'Authorization': 'Bearer ' + this.auth.apiKey,
         })
       }
     }
@@ -54,6 +55,37 @@ let appState = {
   getImageUrl(msgId, imageIndex) {
     return `${this.apiBaseUrl}/api/v2/text_messages/${msgId}/image/${imageIndex}`;
   },
+  async enableManualMode() {
+    const requestParams = Object.assign(
+      this.authCredentials(),
+      {
+        method: "POST",
+        body: JSON.stringify({
+          mode: "Manual",
+          duration_mins: 15
+        })
+      }
+    );
+    await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+
+    // reload participant state including messaging mode and conversations
+    return this.loadMessages();
+  },
+  async disableManualMode() {
+    const requestParams = Object.assign(
+      this.authCredentials(),
+      {
+        method: "PATCH",
+        body: JSON.stringify([
+          {op: "end"}
+        ])
+      }
+    );
+
+    await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/messaging_mode_session`, requestParams);
+    // reload participant state including messaging mode and conversations
+    return this.loadMessages();
+  },
   async fetchMessages(params, update = true) {
     let auth = this.authCredentials();
     let requestParams = Object.assign(auth, {
@@ -67,7 +99,7 @@ let appState = {
       per_page: this.meta.pageSize
     }, params));
 
-    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?`+search, requestParams);
+    let res = await fetch(`${this.apiBaseUrl}/api/v2/text_messages?` + search, requestParams);
 
     if (!res.ok) {
       throw new Error("womp");
@@ -98,20 +130,7 @@ let appState = {
       return false;
     }
     this.loading.initial = true;
-    // use the participants endpoint for the initial load so we can also get info about them
-    let auth = this.authCredentials();
-    let requestParams = Object.assign(auth, {
-      method: "GET"
-    });
-    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=text_messages:limit(${this.meta.pageSize})`;
-    let res = await fetch(url, requestParams);
-    if (!res.ok) {
-      throw new Error("womp");
-    }
-    const ppt = (await res.json()).data;
-    inboxHelper.setTimezone(ppt?.time_zone_name ?? "America/New_York");
-    this.pullMessagesFromData(ppt.text_messages, true);
-
+    await this.loadMessagesViaParticipantApi(`limit(${this.meta.pageSize})`);
     this.loading.initial = false;
   },
   async poll() {
@@ -119,13 +138,33 @@ let appState = {
       return false;
     }
 
-    let params = {
-      updated_at: 'after(' + this.meta.lastUpdated + ')',
-    };
-
     this.loading.polling = true;
-    await this.fetchMessages(params);
+    await this.loadMessagesViaParticipantApi(`updatedAfter(${this.meta.lastUpdated})`)
     this.loading.polling = false;
+  },
+  async loadMessagesViaParticipantApi(textMessageCriteria) {
+    // use the participants endpoint for the initial load and when polling, so we get info on timezone, conversations,
+    // and messaging mode
+    let auth = this.authCredentials();
+    let requestParams = Object.assign(auth, {
+      method: "GET"
+    });
+    const includes = [
+      `text_messages:${textMessageCriteria}`,
+      'messaging_mode_session',
+      'current_conversation',
+    ];
+    const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=${includes.join(',')}`;
+    let res = await fetch(url, requestParams);
+    if (!res.ok) {
+      throw new Error("womp");
+    }
+    const ppt = (await res.json()).data;
+    inboxHelper.setTimezone(ppt?.time_zone_name ?? "America/New_York");
+    manualModeHelper.setCurrentSession(ppt?.messaging_mode_session);
+    manualModeHelper.setCurrentConversation(ppt?.current_conversation);
+    this.pullMessagesFromData(ppt.text_messages, true);
+
   },
   async loadOlder() {
     if (this.loading.older) {
