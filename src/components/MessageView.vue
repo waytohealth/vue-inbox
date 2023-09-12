@@ -74,7 +74,7 @@ export default {
   },
   props: {
     messagesByDate: {
-      type: Object,
+      type: [Object, Array],
       required: true,
     },
     inboxHelper: {
