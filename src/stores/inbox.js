@@ -186,6 +186,7 @@ let appState = {
     let body = {
       message_text: message,
       media_url: imageUrl,
+      force: true
     }
 
     let auth = this.authCredentials();
