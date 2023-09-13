@@ -3,6 +3,14 @@ import inboxHelper from '../helpers/inbox';
 import manualModeHelper from '../helpers/manualMode';
 
 let appState = {
+  init(apiBaseUrl, participantId, studyId, auth) {
+    this.apiBaseUrl = apiBaseUrl;
+    this.participantId = participantId;
+    this.studyId = studyId;
+    this.auth = auth;
+
+    this.messagesObj = {};
+  },
   messagesObj: {},
   apiBaseUrl: null,
   participantId: null,

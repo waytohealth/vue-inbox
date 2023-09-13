@@ -214,10 +214,12 @@ export default {
     }
   },
   async created() {
-    this.store.apiBaseUrl = this.apiBaseUrl;
-    this.store.participantId = this.participantId;
-    this.store.studyId = this.studyId;
-    this.store.auth = this.auth;
+    this.store.init(
+      this.apiBaseUrl,
+      this.participantId,
+      this.studyId,
+      this.auth,
+    );
 
     this.store.loadMessages()
       .then(() => {
