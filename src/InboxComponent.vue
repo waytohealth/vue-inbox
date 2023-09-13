@@ -99,7 +99,7 @@
 
 <script>
 
-import store from './stores/inbox';
+import InboxStore from "./stores/inbox";
 import styles from './stores/styles';
 import inboxHelper from './helpers/inbox';
 import manualModeHelper from './helpers/manualMode';
@@ -166,7 +166,7 @@ export default {
     return {
       scrolled: false,
       styleConfig: Object.assign(styles, this.styles),
-      store,
+      store: null,
       inboxHelper,
       manualModeHelper,
       textContent: "",
@@ -214,7 +214,7 @@ export default {
     }
   },
   async created() {
-    this.store.init(
+    this.store = new InboxStore(
       this.apiBaseUrl,
       this.participantId,
       this.studyId,
@@ -271,11 +271,11 @@ export default {
         if (inboxDiv) {
           if (this.galleryView) {
             if (inboxDiv.scrollTop >= inboxDiv.scrollHeight - inboxDiv.clientHeight - 1) {
-              store.loadOlder();
+              this.store.loadOlder();
             }
           } else {
             if (inboxDiv.scrollTop === 0) {
-              store.loadOlder();
+              this.store.loadOlder();
             }
           }
         }
