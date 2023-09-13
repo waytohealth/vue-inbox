@@ -64,8 +64,8 @@
 </template>
 
 <script>
-import LazyImage from "@/components/LazyImage.vue";
-import {isJustEmoji} from "@/helpers/emojiHelper";
+import LazyImage from "./LazyImage.vue";
+import {isJustEmoji} from "../helpers/emojiHelper";
 
 export default {
   name: "GalleryView",

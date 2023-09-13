@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import LazyImage from "@/components/LazyImage.vue";
+import LazyImage from "./LazyImage.vue";
 import inboxHelper from '../helpers/inbox';
 
 export default {

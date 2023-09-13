@@ -107,7 +107,7 @@ import ImageLightbox from "./components/ImageLightbox.vue";
 import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
 import MessageView from "./components/MessageView.vue";
-import ManualModeToggle from "@/components/ManualModeToggle.vue";
+import ManualModeToggle from "./components/ManualModeToggle.vue";
 
 export default {
   name: "InboxComponent",

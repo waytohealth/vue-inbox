@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import LazyImage from "@/components/LazyImage.vue";
+import LazyImage from "./LazyImage.vue";
 
 export default {
   name: "GalleryView",

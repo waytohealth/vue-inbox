@@ -69,7 +69,7 @@
 </template>
 <script>
 import {EmojiPicker} from 'vue-emoji-picker'
-import {isJustEmoji} from '@/helpers/emojiHelper'
+import {isJustEmoji} from '../helpers/emojiHelper'
 
 export default {
   name: 'InputArea',

@@ -25,7 +25,7 @@
 
 <script>
 import InboxComponent from "./InboxComponent";
-import ImagePicker from "@/ImagePicker.vue";
+import ImagePicker from "./ImagePicker.vue";
 
 export default {
   name: "InboxWrapper",
