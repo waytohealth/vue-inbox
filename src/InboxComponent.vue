@@ -308,6 +308,12 @@ export default {
   overflow-y: scroll;
   border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
+@media print {
+  .inbox {
+    max-height: none;
+    height: auto;
+  }
+}
 
 /deep/ .time {
   float: right;
