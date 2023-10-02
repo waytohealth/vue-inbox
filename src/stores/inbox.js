@@ -196,7 +196,7 @@ class InboxStore {
         }
 
         let params = {
-            created_at: 'before(' + this.meta.oldest + ')',
+            created_at: 'beforeOrEqual(' + this.meta.oldest + ')',
         };
 
         this.loading.older = true;
