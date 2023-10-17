@@ -38,6 +38,9 @@
             <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
             <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
             <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+            <span v-if="msg.metadata">
+              <br><strong>Metadata:</strong> {{ inboxHelper.messageMetadata(msg) }}
+            </span>
           </b-popover>
           <span :class="{'emojiOnly': isJustEmoji(msg.message_text)}">
             {{ msg.message_text }}

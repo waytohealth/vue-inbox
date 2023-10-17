@@ -87,6 +87,11 @@ let helper = {
         return msg.status;
     }
   },
+  messageMetadata: function(msg) {
+      return msg.metadata.map(function(m) {
+        return m.message;
+      }).join('; ');
+  },
   sortMessages(messages) {
     return messages.sort(function(a,b) {
       if ((a.sent_at || a.created_at) > (b.sent_at || b.created_at)) {
