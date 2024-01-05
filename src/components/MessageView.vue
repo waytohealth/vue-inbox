@@ -42,9 +42,10 @@
               <br><strong>Metadata:</strong> {{ inboxHelper.messageMetadata(msg) }}
             </span>
           </b-popover>
-          <span :class="{'emojiOnly': isJustEmoji(msg.message_text)}">
-            {{ msg.message_text }}
-          </span>
+          <span
+            :class="{'emojiOnly': isJustEmoji(msg.message_text)}"
+            style="white-space: pre-wrap;"
+          >{{ msg.message_text }}</span>
 
           <ul v-if="msg.media.length > 0" class="list-inline">
             <li
