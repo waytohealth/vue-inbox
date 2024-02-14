@@ -23,6 +23,7 @@
               :id="`icon-${msg.id}`"
               :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
               :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
+              :font-scale="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).scale"
             />
           </span>
           <b-popover

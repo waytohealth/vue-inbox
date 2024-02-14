@@ -18,9 +18,10 @@ let helper = {
     switch (msg.status) {
       case 'delivered':
       case 'completed':
-      case 'sent':
       case 'received':
         return 'success';
+      case 'sent':
+        return 'sent';
       case 'failed':
       case 'undelivered':
         return 'failure';
@@ -78,8 +79,9 @@ let helper = {
       case 'accepted':
         return 'Text message queued for delivery';
       case 'delivered':
-      case 'sent':
         return 'Text message delivered to carrier';
+      case 'sent':
+        return 'Text message sent to carrier';
       case 'failed':
       case 'undelivered':
         return "Text message was not delivered. Error " + msg.error_code + ": " +msg.error_message;
@@ -109,16 +111,25 @@ let helper = {
         return {
           icon: 'check-lg',
           variant: 'success',
+          scale: "1",
+        }
+      case "sent":
+        return {
+          icon: 'arrow-bar-right',
+          variant: 'success',
+          scale: "1.3",
         }
       case "failure":
         return {
           icon: 'exclamation-triangle-fill',
           variant: 'danger',
+          scale: "1",
         }
       case "unknown":
         return {
           icon: 'info-circle-fill',
           variant: 'info',
+          scale: "1",
         }
     }
   }
