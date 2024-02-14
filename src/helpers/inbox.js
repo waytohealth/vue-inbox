@@ -109,15 +109,15 @@ let helper = {
     switch (status) {
       case "success":
         return {
-          icon: 'check-all',
+          icon: 'check-lg',
           variant: 'success',
-          scale: "1.3",
+          scale: "1",
         }
       case "sent":
         return {
-          icon: 'check-lg',
-          variant: 'warning',
-          scale: "1",
+          icon: 'arrow-bar-right',
+          variant: 'success',
+          scale: "1.3",
         }
       case "failure":
         return {
