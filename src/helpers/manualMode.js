@@ -23,7 +23,7 @@ export default {
   get manualModeExpiration() {
     if (this.session?.mode === 'Manual') {
       let datetime = this.session.expires_at;
-      return dayjs(datetime).format('h:mm:ss A z');
+      return dayjs(datetime).format('M/D/YYYY h:mm:ss A z');
     }
   },
   get sessionTimeRemaining() {
@@ -39,7 +39,7 @@ export default {
   get conversationExpiration() {
     if (this.conversation) {
       let datetime = this.conversation.expires_at;
-      return dayjs(datetime).format('h:mm:ss A z');
+      return dayjs(datetime).format('M/D/YYYY h:mm:ss A z');
     }
   },
   get conversationName() {
