@@ -5,7 +5,7 @@
     </div>
     <div v-for="(msgs, date) in messagesByDate" :key="date">
       <div class="date">
-        {{ inboxHelper.formatDate(date) }}
+        {{ inboxHelper.formatDate(date, false) }}
       </div>
 
       <div v-for="msg in msgs" :key="msg.id">

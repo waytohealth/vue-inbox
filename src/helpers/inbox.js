@@ -54,8 +54,12 @@ let helper = {
     let datetime = msg.sent_at || msg.created_at;
     return dayjs(datetime).tz(this.tz).format('dddd, D MMMM YYYY – h:mm:ss A');
   },
-  formatDate: function(date) {
-    return dayjs(date).tz(this.tz).format('~ dddd, D MMMM YYYY ~');
+  formatDate: function(date, applyTz = true) {
+    if (applyTz) {
+      return dayjs(date).tz(this.tz).format('~ dddd, D MMMM YYYY ~');
+    }
+
+    return dayjs(date).format('~ dddd, D MMMM YYYY ~');
   },
   formatNumber: function(number) {
     // +12345678901 -> 234-567-8901
