@@ -146,6 +146,10 @@ export default {
       type: Number,
       required: true
     },
+    resource: {
+      type: String,
+      default: "participants"
+    },
     imageUploadEnabled: {
       type: Boolean,
       default: false,
@@ -217,6 +221,7 @@ export default {
     this.store = new InboxStore(
       this.apiBaseUrl,
       this.participantId,
+      this.resource,
       this.studyId,
       this.auth,
     );
