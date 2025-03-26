@@ -148,7 +148,11 @@ export default {
     },
     resource: {
       type: String,
-      default: "participants"
+      default: "participants",
+      validator: function (value) {
+        // The value must match one of these
+        return ['participants', 'support_partners'].includes(value);
+      },
     },
     imageUploadEnabled: {
       type: Boolean,
