@@ -146,6 +146,14 @@ export default {
       type: Number,
       required: true
     },
+    resource: {
+      type: String,
+      default: "participants",
+      validator: function (value) {
+        // The value must match one of these
+        return ['participants', 'support_partners'].includes(value);
+      },
+    },
     imageUploadEnabled: {
       type: Boolean,
       default: false,
@@ -217,6 +225,7 @@ export default {
     this.store = new InboxStore(
       this.apiBaseUrl,
       this.participantId,
+      this.resource,
       this.studyId,
       this.auth,
     );

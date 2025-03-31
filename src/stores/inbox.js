@@ -3,9 +3,10 @@ import inboxHelper from "../helpers/inbox";
 import manualModeHelper from "../helpers/manualMode";
 
 class InboxStore {
-    constructor(apiBaseUrl, participantId, studyId, auth) {
+    constructor(apiBaseUrl, participantId, resource, studyId, auth) {
         this.apiBaseUrl = apiBaseUrl;
         this.participantId = participantId;
+        this.resource = resource;
         this.studyId = studyId;
         this.auth = auth;
 
@@ -164,7 +165,7 @@ class InboxStore {
 
 
     async loadMessagesViaParticipantApi(textMessageCriteria) {
-        // use the participants endpoint for the initial load and when polling, so we get info on timezone, conversations,
+        // use the participants/support_partners endpoint for the initial load and when polling, so we get info on timezone, conversations,
         // and messaging mode
         let auth = this.authCredentials();
         let requestParams = Object.assign(auth, {
@@ -175,7 +176,7 @@ class InboxStore {
             'messaging_mode_session',
             'current_conversation',
         ];
-        const url = `${this.apiBaseUrl}/api/v2/participants/${this.participantId}?include=${includes.join(',')}`;
+        const url = `${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}?include=${includes.join(',')}`;
         let res = await fetch(url, requestParams);
         if (!res.ok) {
             throw new Error("womp");
@@ -222,7 +223,7 @@ class InboxStore {
         });
 
         this.loading.send = true;
-        let res = await fetch(`${this.apiBaseUrl}/api/v2/participants/${this.participantId}/text_messages`, requestParams);
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}/text_messages`, requestParams);
         if (!res.ok) {
             this.loading.older = false;
             throw new Error("womp");
