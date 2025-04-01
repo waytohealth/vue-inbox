@@ -21,7 +21,8 @@ class InboxStore {
             older: false,
             initial: false,
             polling: false,
-            send: false
+            send: false,
+            suggestResponse: false,
         };
         this.imageCache = {};
     }
@@ -234,6 +235,35 @@ class InboxStore {
 
         this.messagesObj = Object.assign({}, this.messagesObj, obj);
         this.loading.send = false;
+    }
+
+    async suggestResponse(message) {
+        if (this.loading.suggestResponse) {
+            return false;
+        }
+        let body = {
+            message_text: message
+        }
+
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "POST",
+            body: JSON.stringify(body)
+        });
+
+        this.loading.suggestResponse = true;
+        // TODO: update api route
+        // let res = await fetch(`${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}/text_messages`, requestParams);
+        // if (!res.ok) {
+        //     this.loading.older = false;
+        //     throw new Error("womp");
+        // }
+        // let response = (await res.json()).data;
+        // let obj = {};
+        // obj[text.id] = text;
+
+        this.messagesObj = Object.assign({}, this.messagesObj, obj);
+        this.loading.suggestResponse = false;
     }
 }
 

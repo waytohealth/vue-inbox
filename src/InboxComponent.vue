@@ -93,6 +93,27 @@
           label="Spinning"
         />
       </div>
+
+      <input
+          v-if="aiSuggestionsEnabled &&!store.loading.suggestResponse"
+          type="submit"
+          value="Suggest Response"
+          :class="styleConfig.inboxSuggestResponse"
+          :disabled="store.loading.suggestResponse"
+          @click="suggestResponse"
+      >
+      <div
+          v-else-if="aiSuggestionsEnabled"
+          :class="styleConfig.inboxSuggestResponse"
+          class="disabled"
+      >
+        Suggest Response
+        <b-spinner
+            small
+            variant="light"
+            label="Spinning"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -159,6 +180,10 @@ export default {
       default: false,
     },
     manualModeEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    aiSuggestionsEnabled: {
       type: Boolean,
       default: false,
     },
@@ -298,6 +323,11 @@ export default {
         this.imageUrl = '';
         this.imageName = '';
       }
+    },
+    async suggestResponse() {
+      // if (this.selectedMessage) {
+      //   await this.store.sendMessage(this.selectedMessage);
+      // }
     },
     poll() {
       setTimeout(() => {
