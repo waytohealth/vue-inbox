@@ -95,7 +95,7 @@
       </div>
 
       <input
-          v-if="aiSuggestionsEnabled &&!store.loading.suggestResponse"
+          v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
           type="submit"
           value="Suggest Response"
           :class="styleConfig.inboxSuggestResponse"
@@ -103,12 +103,12 @@
           @click="suggestResponse"
       >
       <div
-          v-else-if="aiSuggestionsEnabled"
+          v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
           :class="styleConfig.inboxSuggestResponse"
           class="disabled"
       >
         Suggest Response
-        <b-spinner
+        <b-spinner v-if="store.loading.suggestResponse"
             small
             variant="light"
             label="Spinning"

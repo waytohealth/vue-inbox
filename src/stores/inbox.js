@@ -11,6 +11,7 @@ class InboxStore {
         this.auth = auth;
 
         this.messagesObj = {};
+        this.selectedMessage = null;
 
         this.meta = {
             lastUpdated: null,
@@ -233,16 +234,30 @@ class InboxStore {
         let obj = {};
         obj[text.id] = text;
 
+        this.deselectMessage();
         this.messagesObj = Object.assign({}, this.messagesObj, obj);
         this.loading.send = false;
     }
+
+    selectMessage(msg) {
+        this.selectedMessage = msg;
+    };
+
+    deselectMessage() {
+        this.selectedMessage = null;
+    };
 
     async suggestResponse(message) {
         if (this.loading.suggestResponse) {
             return false;
         }
+
+        if (!this.selectedMessage) {
+            return false;
+        }
+
         let body = {
-            message_text: message
+            message_text: message.message_text
         }
 
         let auth = this.authCredentials();

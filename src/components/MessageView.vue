@@ -12,7 +12,7 @@
         <div v-if="msg.sender" class="sender">
           {{ msg.sender }}
         </div>
-        <div class="message" :class="inboxHelper.messageClasses(msg)">
+        <div class="message" :class="inboxHelper.messageClasses(msg)" v-on:click="selectMessage($event, msg)">
           <span
             v-b-tooltip.hover
             class="time"
@@ -99,6 +99,23 @@ export default {
     return {
       isJustEmoji
     };
+  },
+  methods: {
+    selectMessage: function(event, msg) {
+      if (msg.direction === 'inbound') {
+        let previouslySelectedMessage = this.$el?.querySelector('.message.selected');
+
+        if (previouslySelectedMessage) {
+          previouslySelectedMessage.classList.remove('selected');
+          this.store.deselectMessage();
+        }
+
+        if (previouslySelectedMessage !== event.currentTarget) {
+          event.currentTarget.classList.add('selected');
+          this.store.selectMessage(msg);
+        }
+      }
+    }
   }
 }
 </script>
@@ -146,6 +163,10 @@ div.sender {
   background-color: #bdf9bd;
   -webkit-box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
   box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
+}
+
+.inbound.selected {
+  box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
 }
 
 .message::before {
