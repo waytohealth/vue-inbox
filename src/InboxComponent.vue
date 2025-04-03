@@ -325,9 +325,8 @@ export default {
       }
     },
     async suggestResponse() {
-      // if (this.selectedMessage) {
-      //   await this.store.sendMessage(this.selectedMessage);
-      // }
+      await this.store.suggestResponse();
+      console.log('suggestedResponse');
     },
     poll() {
       setTimeout(() => {

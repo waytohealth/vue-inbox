@@ -247,7 +247,7 @@ class InboxStore {
         this.selectedMessage = null;
     };
 
-    async suggestResponse(message) {
+    async suggestResponse() {
         if (this.loading.suggestResponse) {
             return false;
         }
@@ -257,7 +257,7 @@ class InboxStore {
         }
 
         let body = {
-            message_text: message.message_text
+            message_text: this.selectedMessage.message_text
         }
 
         let auth = this.authCredentials();
@@ -267,17 +267,15 @@ class InboxStore {
         });
 
         this.loading.suggestResponse = true;
-        // TODO: update api route
-        // let res = await fetch(`${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}/text_messages`, requestParams);
-        // if (!res.ok) {
-        //     this.loading.older = false;
-        //     throw new Error("womp");
-        // }
-        // let response = (await res.json()).data;
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}/ai_response_request`, requestParams);
+        if (!res.ok) {
+            this.loading.suggestResponse = false;
+            throw new Error("womp");
+        }
+        let response = (await res.json()).data;
         // let obj = {};
         // obj[text.id] = text;
 
-        this.messagesObj = Object.assign({}, this.messagesObj, obj);
         this.loading.suggestResponse = false;
     }
 }
