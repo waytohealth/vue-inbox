@@ -56,32 +56,32 @@
         :show-image-upload-invoker="imageUploadEnabled && !imageUrl"
         @openImageUpload="showImageUploader = true"
       />
-      <div v-if="imageUrl">
-        <h4>Attachments</h4>
-        <ul class="list-unstyled">
-          <li>
-            <span class="filename">{{ imageName }}</span>
-            <button
-              class="btn btn-link"
-              type="button"
-              @click="removeAttachment"
-            >
-              <span class="fa fa-trash text-danger" />
-              <span class="sr-only">Remove</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-      <input
-        v-if="!store.loading.send"
-        type="submit"
-        value="Send SMS Message"
-        :class="styleConfig.inboxSubmit"
-        :disabled="store.loading.send"
-        @click="sendMessage"
-      >
+      <div v-if="!store.aiGeneratedResponse" class="inbox-action-items">
+        <div v-if="imageUrl">
+          <h4>Attachments</h4>
+          <ul class="list-unstyled">
+            <li>
+              <span class="filename">{{ imageName }}</span>
+              <button
+                class="btn btn-link"
+                type="button"
+                @click="removeAttachment"
+              >
+                <span class="fa fa-trash text-danger" />
+                <span class="sr-only">Remove</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+        <input
+          v-if="!store.loading.send"
+          type="submit"
+          value="Send SMS Message"
+          :class="styleConfig.inboxSubmit"
+          :disabled="store.loading.send"
+          @click="sendMessage"
+        >
 
-      <div>
         <div
             v-else
             :class="styleConfig.inboxSubmit"
@@ -115,6 +115,34 @@
                      label="Spinning"
           />
         </div>
+      </div>
+      <div v-else class="inbox-action-items mt-1">
+        <b-button-group>
+          <b-button variant="primary"
+                    :disabled="store.loading.send"
+                    @click="sendSuggestedResponse">
+            <b-icon icon="hand-thumbs-up"/>
+            Send
+          </b-button>
+          <b-button variant="danger"
+                    :disabled="store.loading.send"
+                    @click="rejectSuggestedResponse">
+            <b-icon icon="hand-thumbs-down"/>
+            Reject
+          </b-button>
+          <b-button variant="secondary"
+                    :disabled="store.loading.send"
+                    @click="editSuggestedResponse">
+            <b-icon icon="pencil"/>
+            Edit
+          </b-button>
+          <b-button variant="secondary"
+                    :disabled="store.loading.send"
+                    @click="refreshSuggestedResponse">
+            <b-icon icon="recycle"/>
+            Refresh
+          </b-button>
+        </b-button-group>
       </div>
     </div>
   </div>
@@ -332,6 +360,18 @@ export default {
         this.imageUrl = '';
         this.imageName = '';
       }
+    },
+    async sendSuggestedResponse() {
+      console.log('sending suggested response')
+    },
+    async rejectSuggestedResponse() {
+      console.log('reject suggested response')
+    },
+    async editSuggestedResponse() {
+      console.log('edit suggested response')
+    },
+    async refreshSuggestedResponse() {
+      console.log('refresh suggested response')
     },
     async suggestResponse() {
       await this.store.suggestResponse();
