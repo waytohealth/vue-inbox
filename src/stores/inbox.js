@@ -12,6 +12,7 @@ class InboxStore {
 
         this.messagesObj = {};
         this.selectedMessage = null;
+        this.aiGeneratedResponse = null;
 
         this.meta = {
             lastUpdated: null,
@@ -273,9 +274,7 @@ class InboxStore {
             throw new Error("womp");
         }
         let response = (await res.json()).data;
-        // let obj = {};
-        // obj[text.id] = text;
-
+        this.aiGeneratedResponse = response;
         this.loading.suggestResponse = false;
     }
 }

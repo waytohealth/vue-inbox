@@ -52,7 +52,7 @@
       />
       <InputArea
         v-model="textContent"
-        :disabled="store.loading.send"
+        :disabled="disableTextInput"
         :show-image-upload-invoker="imageUploadEnabled && !imageUrl"
         @openImageUpload="showImageUploader = true"
       />
@@ -81,38 +81,40 @@
         @click="sendMessage"
       >
 
-      <div
-        v-else
-        :class="styleConfig.inboxSubmit"
-        class="disabled"
-      >
-        Send SMS Message
-        <b-spinner
-          small
-          variant="light"
-          label="Spinning"
-        />
-      </div>
+      <div>
+        <div
+            v-else
+            :class="styleConfig.inboxSubmit"
+            class="disabled"
+        >
+          Send SMS Message
+          <b-spinner
+              small
+              variant="light"
+              label="Spinning"
+          />
+        </div>
 
-      <input
-          v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
-          type="submit"
-          value="Suggest Response"
-          :class="styleConfig.inboxSuggestResponse"
-          :disabled="store.loading.suggestResponse"
-          @click="suggestResponse"
-      >
-      <div
-          v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
-          :class="styleConfig.inboxSuggestResponse"
-          class="disabled"
-      >
-        Suggest Response
-        <b-spinner v-if="store.loading.suggestResponse"
-            small
-            variant="light"
-            label="Spinning"
-        />
+        <input
+            v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
+            type="submit"
+            value="Suggest Response"
+            :class="styleConfig.inboxSuggestResponse"
+            :disabled="store.loading.suggestResponse"
+            @click="suggestResponse"
+        >
+        <div
+            v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
+            :class="styleConfig.inboxSuggestResponse"
+            class="disabled"
+        >
+          Suggest Response
+          <b-spinner v-if="store.loading.suggestResponse"
+                     small
+                     variant="light"
+                     label="Spinning"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -211,6 +213,13 @@ export default {
     }
   },
   computed: {
+    disableTextInput() {
+      if (this.store.loading.send) {
+        return true;
+      }
+
+      return !!this.store.aiGeneratedResponse;
+    },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
         return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
@@ -326,7 +335,7 @@ export default {
     },
     async suggestResponse() {
       await this.store.suggestResponse();
-      console.log('suggestedResponse');
+      this.textContent = this.store.aiGeneratedResponse.response.message;
     },
     poll() {
       setTimeout(() => {
