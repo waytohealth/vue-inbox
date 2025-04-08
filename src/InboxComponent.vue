@@ -117,32 +117,30 @@
         </div>
       </div>
       <div v-else class="inbox-action-items mt-1">
-        <b-button-group>
-          <b-button variant="primary"
-                    :disabled="store.loading.send"
-                    @click="sendSuggestedResponse">
-            <b-icon icon="hand-thumbs-up"/>
-            Send
-          </b-button>
-          <b-button variant="danger"
-                    :disabled="store.loading.send"
-                    @click="rejectSuggestedResponse">
-            <b-icon icon="hand-thumbs-down"/>
-            Reject
-          </b-button>
-          <b-button variant="secondary"
-                    :disabled="store.loading.send"
-                    @click="editSuggestedResponse">
-            <b-icon icon="pencil"/>
-            Edit
-          </b-button>
-          <b-button variant="secondary"
-                    :disabled="store.loading.send"
-                    @click="refreshSuggestedResponse">
-            <b-icon icon="recycle"/>
-            Refresh
-          </b-button>
-        </b-button-group>
+        <b-button variant="primary"
+                  :disabled="store.loading.send"
+                  @click="sendSuggestedResponse">
+          <b-icon icon="hand-thumbs-up"/>
+          Send
+        </b-button>
+        <b-button variant="danger"
+                  :disabled="store.loading.send"
+                  @click="rejectSuggestedResponse">
+          <b-icon icon="hand-thumbs-down"/>
+          Reject
+        </b-button>
+        <b-button variant="secondary"
+                  :disabled="store.loading.send"
+                  @click="editSuggestedResponse">
+          <b-icon icon="pencil"/>
+          Edit
+        </b-button>
+        <b-button variant="secondary"
+                  :disabled="store.loading.send"
+                  @click="refreshSuggestedResponse">
+          <b-icon icon="recycle"/>
+          Refresh
+        </b-button>
       </div>
     </div>
   </div>
@@ -375,7 +373,7 @@ export default {
     },
     async suggestResponse() {
       await this.store.suggestResponse();
-      this.textContent = this.store.aiGeneratedResponse.response.message;
+      this.textContent = this.store.aiGeneratedResponse.response;
     },
     poll() {
       setTimeout(() => {
