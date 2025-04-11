@@ -103,12 +103,13 @@
             v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
             type="submit"
             value="Suggest Response"
-            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage}]"
-            :disabled="store.loading.suggestResponse"
+            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
+            :disabled="store.loading.suggestResponse && !store.selectedMessage"
             @click="suggestResponse"
         >
         <div
             v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
+            id="ai-response-info"
             :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
         >
           Suggest Response
@@ -117,6 +118,22 @@
                      variant="light"
                      label="Spinning"
           />
+          <span v-if="!store.selectedMessage">
+            <b-icon
+                id="ai-response-info-icon"
+                icon="info-circle-fill"
+                variant="primary"
+                font-scale="1"
+            />
+          </span>
+          <b-popover
+              target="ai-response-info"
+              title="AI generated responses are enabled"
+              triggers="click blur"
+              placement="right"
+          >
+            Select an inbound message above and click "Suggest Response" to generate a response.
+          </b-popover>
         </div>
       </div>
       <div v-else class="inbox-action-items mt-1">
