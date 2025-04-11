@@ -25,6 +25,7 @@ class InboxStore {
             polling: false,
             send: false,
             suggestResponse: false,
+            refreshResponse: false,
         };
         this.imageCache = {};
     }
@@ -294,7 +295,30 @@ class InboxStore {
         this.aiGeneratedResponse = null;
         this.deselectMessage();
     }
+    async refreshSuggestedMessage() {
+        this.loading.refreshResponse = true;
+        let body = [
+            {
+                op: 'replace',
+                path: '/review',
+                value: 'Refreshed'
+            }
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
 
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        await this.suggestResponse();
+        this.loading.refreshResponse = false;
+    }
     selectMessage(msg) {
         this.selectedMessage = msg;
     };

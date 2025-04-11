@@ -245,7 +245,9 @@ export default {
   },
   computed: {
     disableTextInput() {
-      return !!this.store.loading.send;
+      return !!this.store.loading.send
+          || !!this.store.loading.suggestResponse
+          || !!this.store.loading.refreshResponse;
     },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
@@ -384,7 +386,8 @@ export default {
       }
     },
     async refreshSuggestedResponse() {
-      console.log('refresh suggested response')
+      await this.store.refreshSuggestedMessage();
+      this.textContent = this.store.aiGeneratedResponse.response;
     },
     async suggestResponse() {
       await this.store.suggestResponse();
