@@ -101,14 +101,13 @@
             v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
             type="submit"
             value="Suggest Response"
-            :class="styleConfig.inboxSuggestResponse"
+            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage}]"
             :disabled="store.loading.suggestResponse"
             @click="suggestResponse"
         >
         <div
             v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
-            :class="styleConfig.inboxSuggestResponse"
-            class="disabled"
+            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
         >
           Suggest Response
           <b-spinner v-if="store.loading.suggestResponse"
@@ -139,9 +138,15 @@
         </b-button>
         <b-button variant="secondary"
                   :disabled="store.loading.send"
+                  :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
                   @click="refreshSuggestedResponse">
           <b-icon icon="recycle"/>
           Refresh
+          <b-spinner v-if="store.loading.refreshResponse"
+                     small
+                     variant="light"
+                     label="Spinning"
+          />
         </b-button>
       </div>
     </div>
@@ -414,6 +419,7 @@ export default {
   overflow-y: scroll;
   border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
+
 @media print {
   .inbox {
     max-height: none;
@@ -421,19 +427,79 @@ export default {
   }
 }
 
-/deep/ .time {
+::v-deep .time {
   float: right;
   margin: 0 3px 0;
   color: gray;
 }
 
-/deep/ .status-icon {
+::v-deep .status-icon {
   float: left;
   cursor: pointer;
   margin: 0 3px 0;
 }
 
-/deep/ .cursor-pointer {
+::v-deep .cursor-pointer {
   cursor: pointer;
+}
+
+::v-deep .suggest-response-button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+::v-deep .suggest-response-button.selected {
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  background-size: 400% 400%;
+  color: white;
+}
+
+::v-deep .suggest-response-button.selected.loading {
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+::v-deep .refresh-button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+::v-deep .refresh-button.selected {
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  background-size: 400% 400%;
+  color: white;
+}
+
+::v-deep .refresh-button.selected.loading {
+  animation: gradientShift 3s ease-in-out infinite;
 }
 </style>

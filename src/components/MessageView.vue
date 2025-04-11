@@ -64,14 +64,18 @@
               </li>
             </ul>
           </div>
-          <b-icon 
-            class="selected-icon" 
-            v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id" 
-            icon="stars" 
-            scale="2"
-            :class="{'text-muted': store.loading.suggestResponse}"
+          <div 
+            class="stars-container" 
+            v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
             @click.stop="!store.loading.suggestResponse && store.suggestResponse()"
-          ></b-icon>
+          >
+            <b-icon 
+              class="selected-icon" 
+              icon="stars" 
+              scale="2"
+              :class="{'text-muted': store.loading.suggestResponse}"
+            ></b-icon>
+          </div>
         </div>
       </div>
     </div>
@@ -182,14 +186,51 @@ div.sender {
   box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
 }
 
-.message-container.selected .selected-icon {
+.message-container.selected .stars-container {
   position: absolute;
-  display: block;
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
   margin-left: -10px;
-  color: darkgreen;
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 400% 400%;
+}
+
+.message-container.selected .stars-container:has(.text-muted) {
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.message-container.selected .selected-icon {
+  color: white;
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 0;
 }
 
 .message::before {
