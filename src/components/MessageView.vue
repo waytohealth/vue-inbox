@@ -12,57 +12,66 @@
         <div v-if="msg.sender" class="sender">
           {{ msg.sender }}
         </div>
-        <div class="message" :class="inboxHelper.messageClasses(msg)" v-on:click="selectMessage($event, msg)">
-          <span
-            v-b-tooltip.hover
-            class="time"
-            :title="inboxHelper.tooltipTime(msg)"
-          >{{ inboxHelper.messageTime(msg) }}</span>
-          <span class="status-icon">
-            <b-icon
-              :id="`icon-${msg.id}`"
-              :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
-              :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
-              :font-scale="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).scale"
-            />
-          </span>
-          <b-popover
-            :target="`icon-${msg.id}`"
-            title="Text Message Details"
-            triggers="click blur"
-            :placement="msg.direction === 'inbound' ? 'right' : 'left'"
-          >
-            <template #title>
-              Text Message Details
-            </template>
-            <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
-            <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
-            <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
-            <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
-            <span v-if="msg.metadata">
-              <br><strong>Metadata:</strong> {{ inboxHelper.messageMetadata(msg) }}
-            </span>
-          </b-popover>
-          <span
-            :class="{'emojiOnly': isJustEmoji(msg.message_text)}"
-            style="white-space: pre-wrap;"
-          >{{ msg.message_text }}</span>
-
-          <ul v-if="msg.media.length > 0" class="list-inline">
-            <li
-              v-for="(media, idx) in msg.media"
-              :key="media.sid"
-              class="cursor-pointer"
-            >
-              <LazyImage
-                context="inbox"
-                :store="store"
-                :url="store.getImageUrl(msg.id, idx)"
-                @click.native="$emit('openImageLightbox', msg.id, idx)"
+        <div class="message-container" @click="selectMessage($event, msg)">
+          <div class="message" :class="inboxHelper.messageClasses(msg)">
+            <span
+              v-b-tooltip.hover
+              class="time"
+              :title="inboxHelper.tooltipTime(msg)"
+            >{{ inboxHelper.messageTime(msg) }}</span>
+            <span class="status-icon">
+              <b-icon
+                :id="`icon-${msg.id}`"
+                :icon="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).icon"
+                :variant="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).variant"
+                :font-scale="inboxHelper.getIconForStatus(inboxHelper.statusType(msg)).scale"
               />
-            </li>
-          </ul>
-          <b-icon class="selected-icon" v-if="msg.direction === 'inbound'" icon="stars" scale="2"></b-icon>
+            </span>
+            <b-popover
+              :target="`icon-${msg.id}`"
+              title="Text Message Details"
+              triggers="click blur"
+              :placement="msg.direction === 'inbound' ? 'right' : 'left'"
+            >
+              <template #title>
+                Text Message Details
+              </template>
+              <strong>From:</strong> {{ inboxHelper.formatNumber(msg.from_number) }}<br>
+              <strong>To:</strong> {{ inboxHelper.formatNumber(msg.to_number) }}<br>
+              <strong>Status:</strong> {{ inboxHelper.messageStatus(msg) }}<br>
+              <strong>Sent:</strong> {{ inboxHelper.messageDetailTime(msg) }}
+              <span v-if="msg.metadata">
+                <br><strong>Metadata:</strong> {{ inboxHelper.messageMetadata(msg) }}
+              </span>
+            </b-popover>
+            <span
+              :class="{'emojiOnly': isJustEmoji(msg.message_text)}"
+              style="white-space: pre-wrap;"
+            >{{ msg.message_text }}</span>
+
+            <ul v-if="msg.media.length > 0" class="list-inline">
+              <li
+                v-for="(media, idx) in msg.media"
+                :key="media.sid"
+                class="cursor-pointer"
+              >
+                <LazyImage
+                  context="inbox"
+                  :store="store"
+                  :url="store.getImageUrl(msg.id, idx)"
+                  @click.native="$emit('openImageLightbox', msg.id, idx)"
+                />
+              </li>
+            </ul>
+          </div>
+          <b-icon 
+            class="selected-icon" 
+            v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id" 
+            icon="stars" 
+            scale="2"
+            :class="{'text-muted': store.loading.suggestResponse}"
+            @click.stop="!store.loading.suggestResponse && store.suggestResponse()"
+          ></b-icon>
         </div>
       </div>
     </div>
@@ -169,20 +178,17 @@ div.sender {
 .inbound:hover {
   box-shadow: 0px 0px 2px 20px rgba(0, 100, 0, .4);
 }
-.inbound.selected {
+.message-container.selected .inbound {
   box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
 }
 
-.inbound .selected-icon{
-  display: none;
-}
-
-.inbound.selected .selected-icon {
+.message-container.selected .selected-icon {
   position: absolute;
   display: block;
   left: 100%;
-  top: 45%;
-  margin-left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: -10px;
   color: darkgreen;
 }
 
@@ -217,6 +223,11 @@ div.sender {
 
 .outbound.manual, .outbound.manual::before {
   background-color: #badfff;
+}
+
+.message-container {
+  position: relative;
+  display: inline-block;
 }
 
 </style>
