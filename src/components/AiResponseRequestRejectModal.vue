@@ -50,8 +50,7 @@ export default {
       if (rejectComment === 'other') {
         rejectComment = this.otherValue;
       }
-      await this.store.rejectSuggestedMessage(rejectComment);
-      this.$bvModal.hide('reject-comment-modal');
+      this.$emit('submit', rejectComment);
     },
   }
 }

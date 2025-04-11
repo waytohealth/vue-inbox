@@ -267,34 +267,32 @@ class InboxStore {
     }
 
     async rejectSuggestedMessage(rejectComment) {
-        console.log(rejectComment);
-        // let body = [
-        //     {
-        //         op: 'replace',
-        //         path: '/review',
-        //         value: 'Rejected'
-        //     },
-        //     {
-        //         op: 'replace',
-        //         path: '/comment',
-        //         value: rejectComment
-        //     },
-        // ];
-        // let auth = this.authCredentials();
-        // let requestParams = Object.assign(auth, {
-        //     method: "PATCH",
-        //     body: JSON.stringify(body)
-        // });
-        //
-        // let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
-        // if (!res.ok) {
-        //     this.loading.older = false;
-        //     throw new Error("womp");
-        // }
-        //
-        //
-        // this.aiGeneratedResponse = null;
-        // this.deselectMessage();
+        let body = [
+            {
+                op: 'replace',
+                path: '/review',
+                value: 'Rejected'
+            },
+            {
+                op: 'replace',
+                path: '/comment',
+                value: rejectComment
+            },
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
+
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        this.aiGeneratedResponse = null;
+        this.deselectMessage();
     }
 
     selectMessage(msg) {

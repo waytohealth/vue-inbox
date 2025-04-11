@@ -45,6 +45,7 @@
     />
     <AiResponseRequestRejectModal
         :store="store"
+        @submit="rejectSuggestedResponse"
     />
     <div>
       <slot
@@ -365,25 +366,22 @@ export default {
     async sendSuggestedResponse() {
       if (this.textContent.length && this.store.aiGeneratedResponse) {
         await this.store.sendSuggestedMessage(this.textContent, this.imageUrl);
-        this.$el?.querySelector('.message.selected').classList.remove('selected');
+        this.$el?.querySelector('.message-container.selected').classList.remove('selected');
         this.scrollToNewest('smooth');
         this.textContent = "";
         this.imageUrl = '';
         this.imageName = '';
       }
     },
-    async rejectSuggestedResponse() {
+    async rejectSuggestedResponse(comment) {
       if (this.store.aiGeneratedResponse) {
-        await this.store.rejectSuggestedMessage();
-        this.$el?.querySelector('.message.selected').classList.remove('selected');
-        this.scrollToNewest('smooth');
+        await this.store.rejectSuggestedMessage(comment);
+        this.$el?.querySelector('.message-container.selected').classList.remove('selected');
         this.textContent = "";
         this.imageUrl = '';
         this.imageName = '';
+        this.$bvModal.hide('reject-comment-modal');
       }
-    },
-    async editSuggestedResponse() {
-      console.log('edit suggested response')
     },
     async refreshSuggestedResponse() {
       console.log('refresh suggested response')
