@@ -117,7 +117,7 @@ export default {
   methods: {
     selectMessage: function(event, msg) {
       if (msg.direction === 'inbound') {
-        let previouslySelectedMessage = this.$el?.querySelector('.message.selected');
+        let previouslySelectedMessage = this.$el?.querySelector('.message-container.selected');
 
         if (previouslySelectedMessage) {
           previouslySelectedMessage.classList.remove('selected');
