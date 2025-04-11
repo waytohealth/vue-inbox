@@ -67,7 +67,7 @@
           <div 
             class="stars-container" 
             v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
-            @click.stop="!store.loading.suggestResponse && store.suggestResponse()"
+            @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
           >
             <b-icon 
               class="selected-icon" 
@@ -208,6 +208,13 @@ div.sender {
   align-items: center;
   justify-content: center;
   background-size: 400% 400%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.message-container.selected .stars-container:hover:not(:has(.text-muted)) {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .message-container.selected .stars-container:has(.text-muted) {

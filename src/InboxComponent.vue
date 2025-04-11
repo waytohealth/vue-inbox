@@ -29,6 +29,7 @@
           :store="store"
           :show-load-more="store.loading.older"
           @openImageLightbox="openImageLightbox"
+          @suggestResponse="suggestResponse"
         />
       </div>
     </div>
