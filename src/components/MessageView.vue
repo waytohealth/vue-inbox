@@ -62,6 +62,7 @@
               />
             </li>
           </ul>
+          <b-icon class="selected-icon" v-if="msg.direction === 'inbound'" icon="stars" scale="2"></b-icon>
         </div>
       </div>
     </div>
@@ -165,8 +166,24 @@ div.sender {
   box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
 }
 
+.inbound:hover {
+  box-shadow: 0px 0px 2px 20px rgba(0, 100, 0, .4);
+}
 .inbound.selected {
   box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
+}
+
+.inbound .selected-icon{
+  display: none;
+}
+
+.inbound.selected .selected-icon {
+  position: absolute;
+  display: block;
+  left: 100%;
+  top: 45%;
+  margin-left: 30px;
+  color: darkgreen;
 }
 
 .message::before {
