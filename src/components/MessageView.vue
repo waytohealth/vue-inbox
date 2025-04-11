@@ -63,19 +63,20 @@
                 />
               </li>
             </ul>
+            <div 
+              class="stars-container" 
+              v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
+              @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
+            >
+              <b-icon 
+                class="selected-icon" 
+                icon="stars" 
+                scale="2"
+                :class="{'text-muted': store.loading.suggestResponse}"
+              ></b-icon>
+            </div>
           </div>
-          <div 
-            class="stars-container" 
-            v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
-            @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
-          >
-            <b-icon 
-              class="selected-icon" 
-              icon="stars" 
-              scale="2"
-              :class="{'text-muted': store.loading.suggestResponse}"
-            ></b-icon>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -186,9 +187,9 @@ div.sender {
   box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
 }
 
-.message-container.selected .stars-container {
+.message-container.selected .message .stars-container {
   position: absolute;
-  left: 100%;
+  left: 110%;
   top: 50%;
   transform: translateY(-50%);
   margin-left: -10px;
@@ -212,12 +213,12 @@ div.sender {
   transition: transform 0.2s ease;
 }
 
-.message-container.selected .stars-container:hover:not(:has(.text-muted)) {
+.message-container.selected .message .stars-container:hover:not(:has(.text-muted)) {
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.message-container.selected .stars-container:has(.text-muted) {
+.message-container.selected .message .stars-container:has(.text-muted) {
   animation: gradientShift 3s ease-in-out infinite;
 }
 
