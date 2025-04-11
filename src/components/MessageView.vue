@@ -189,10 +189,10 @@ div.sender {
 
 .message-container.selected .message .stars-container {
   position: absolute;
-  left: 110%;
+  left: 100%;
   top: 50%;
   transform: translateY(-50%);
-  margin-left: -10px;
+  margin-left: 25px;
   background: linear-gradient(135deg, 
     #6366f1 0%, 
     #8b5cf6 25%, 
