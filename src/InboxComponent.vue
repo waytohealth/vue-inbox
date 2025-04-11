@@ -42,7 +42,9 @@
       :store="store"
       :helper="manualModeHelper"
     />
-
+    <AiResponseRequestRejectModal
+        :store="store"
+    />
     <div>
       <slot
         name="imagePicker"
@@ -125,7 +127,7 @@
         </b-button>
         <b-button variant="danger"
                   :disabled="store.loading.send"
-                  @click="rejectSuggestedResponse">
+                  @click="openRejectCommentModal">
           <b-icon icon="hand-thumbs-down"/>
           Reject
         </b-button>
@@ -157,6 +159,7 @@ import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
 import MessageView from "./components/MessageView.vue";
 import ManualModeToggle from "./components/ManualModeToggle.vue";
+import AiResponseRequestRejectModal from "./components/AiResponseRequestRejectModal.vue";
 
 export default {
   name: "InboxComponent",
@@ -166,6 +169,7 @@ export default {
     InputArea,
     ImageLightbox,
     MessageView,
+    AiResponseRequestRejectModal
   },
   props: {
     auth: {
@@ -324,6 +328,9 @@ export default {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex, this.galleryView);
     },
+    openRejectCommentModal() {
+      this.$bvModal.show('reject-comment-modal');
+    },
     scrollToNewest(behavior = 'auto') {
       const el = this.$el.querySelector('.inbox');
       const scrollToOffset = this.galleryView ? 0 : el.scrollHeight;
@@ -360,10 +367,24 @@ export default {
       }
     },
     async sendSuggestedResponse() {
-      console.log('sending suggested response')
+      if (this.textContent.length && this.store.aiGeneratedResponse) {
+        await this.store.sendSuggestedMessage(this.textContent, this.imageUrl);
+        this.$el?.querySelector('.message.selected').classList.remove('selected');
+        this.scrollToNewest('smooth');
+        this.textContent = "";
+        this.imageUrl = '';
+        this.imageName = '';
+      }
     },
     async rejectSuggestedResponse() {
-      console.log('reject suggested response')
+      if (this.store.aiGeneratedResponse) {
+        await this.store.rejectSuggestedMessage();
+        this.$el?.querySelector('.message.selected').classList.remove('selected');
+        this.scrollToNewest('smooth');
+        this.textContent = "";
+        this.imageUrl = '';
+        this.imageName = '';
+      }
     },
     async editSuggestedResponse() {
       console.log('edit suggested response')

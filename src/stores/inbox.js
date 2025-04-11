@@ -240,6 +240,63 @@ class InboxStore {
         this.loading.send = false;
     }
 
+    async sendSuggestedMessage(message, imageUrl) {
+        let body = [
+            {
+                op: 'replace',
+                path: '/final',
+                value: message
+            }
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
+
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        //once we've updated the AiResponseReqeust we can generate/send the text message
+        await this.sendMessage(message, imageUrl);
+        this.aiGeneratedResponse = null;
+        this.deselectMessage();
+    }
+
+    async rejectSuggestedMessage(rejectComment) {
+        console.log(rejectComment);
+        // let body = [
+        //     {
+        //         op: 'replace',
+        //         path: '/review',
+        //         value: 'Rejected'
+        //     },
+        //     {
+        //         op: 'replace',
+        //         path: '/comment',
+        //         value: rejectComment
+        //     },
+        // ];
+        // let auth = this.authCredentials();
+        // let requestParams = Object.assign(auth, {
+        //     method: "PATCH",
+        //     body: JSON.stringify(body)
+        // });
+        //
+        // let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        // if (!res.ok) {
+        //     this.loading.older = false;
+        //     throw new Error("womp");
+        // }
+        //
+        //
+        // this.aiGeneratedResponse = null;
+        // this.deselectMessage();
+    }
+
     selectMessage(msg) {
         this.selectedMessage = msg;
     };
@@ -258,7 +315,8 @@ class InboxStore {
         }
 
         let body = {
-            message_text: this.selectedMessage.message_text
+            input: this.selectedMessage.message_text,
+            participant_id: this.participantId
         }
 
         let auth = this.authCredentials();
@@ -268,13 +326,12 @@ class InboxStore {
         });
 
         this.loading.suggestResponse = true;
-        let res = await fetch(`${this.apiBaseUrl}/api/v2/${this.resource}/${this.participantId}/ai_response_request`, requestParams);
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests`, requestParams);
         if (!res.ok) {
             this.loading.suggestResponse = false;
             throw new Error("womp");
         }
-        let response = (await res.json()).data;
-        this.aiGeneratedResponse = response;
+        this.aiGeneratedResponse = (await res.json()).data;
         this.loading.suggestResponse = false;
     }
 }
