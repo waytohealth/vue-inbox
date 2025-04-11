@@ -257,12 +257,14 @@ div.sender {
 .outbound {
   float: right;
   margin: 5px 20px 5px 45px;
+  background-color: #badfff;
 }
 
 .outbound::before {
   right: -9px;
   -webkit-box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
   box-shadow: 2px -2px 2px 0 rgb(178 178 178 / 40%);
+  background-color: #badfff;
 }
 
 .outbound.automated, .outbound.automated::before {
@@ -276,6 +278,15 @@ div.sender {
 .message-container {
   position: relative;
   display: inline-block;
+  width: 100%;
+}
+
+.message-container .inbound {
+  float: left;
+}
+
+.message-container .outbound {
+  float: right;
 }
 
 </style>
