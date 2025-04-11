@@ -133,12 +133,6 @@
         </b-button>
         <b-button variant="secondary"
                   :disabled="store.loading.send"
-                  @click="editSuggestedResponse">
-          <b-icon icon="pencil"/>
-          Edit
-        </b-button>
-        <b-button variant="secondary"
-                  :disabled="store.loading.send"
                   :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
                   @click="refreshSuggestedResponse">
           <b-icon icon="recycle"/>
@@ -250,11 +244,7 @@ export default {
   },
   computed: {
     disableTextInput() {
-      if (this.store.loading.send) {
-        return true;
-      }
-
-      return !!this.store.aiGeneratedResponse;
+      return !!this.store.loading.send;
     },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
