@@ -236,12 +236,16 @@ class InboxStore {
         let obj = {};
         obj[text.id] = text;
 
-        this.deselectMessage();
+        this.selectedMessage = null;
         this.messagesObj = Object.assign({}, this.messagesObj, obj);
         this.loading.send = false;
     }
 
     async sendSuggestedMessage(message, imageUrl) {
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
         let body = [
             {
                 op: 'replace',
@@ -261,13 +265,17 @@ class InboxStore {
             throw new Error("womp");
         }
 
-        //once we've updated the AiResponseReqeust we can generate/send the text message
+        //once we've updated the AiResponseRequest we can generate/send the text message
         await this.sendMessage(message, imageUrl);
         this.aiGeneratedResponse = null;
-        this.deselectMessage();
+        this.selectedMessage = null;
     }
 
     async rejectSuggestedMessage(rejectComment) {
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
         let body = [
             {
                 op: 'replace',
@@ -293,9 +301,17 @@ class InboxStore {
         }
 
         this.aiGeneratedResponse = null;
-        this.deselectMessage();
+        this.selectedMessage = null;
     }
     async refreshSuggestedMessage() {
+        if (this.loading.refreshResponse) {
+            return false;
+        }
+
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
         this.loading.refreshResponse = true;
         let body = [
             {
@@ -319,13 +335,6 @@ class InboxStore {
         await this.suggestResponse();
         this.loading.refreshResponse = false;
     }
-    selectMessage(msg) {
-        this.selectedMessage = msg;
-    };
-
-    deselectMessage() {
-        this.selectedMessage = null;
-    };
 
     async suggestResponse() {
         if (this.loading.suggestResponse) {

@@ -124,6 +124,7 @@
                 icon="info-circle-fill"
                 variant="primary"
                 font-scale="1"
+                class="ml-1"
             />
           </span>
           <b-popover
@@ -478,13 +479,13 @@ export default {
 
 @keyframes gradientShift {
   0% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
   50% {
     background-position: 100% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
 }
 

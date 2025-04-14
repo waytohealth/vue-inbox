@@ -85,7 +85,7 @@
 
 <script>
 import LazyImage from "./LazyImage.vue";
-import {isJustEmoji} from "../helpers/emojiHelper";
+import {isJustEmoji} from "@/helpers/emojiHelper";
 
 export default {
   name: "GalleryView",
@@ -122,12 +122,12 @@ export default {
 
         if (previouslySelectedMessage) {
           previouslySelectedMessage.classList.remove('selected');
-          this.store.deselectMessage();
+          this.store.selectedMessage = null;
         }
 
         if (previouslySelectedMessage !== event.currentTarget) {
           event.currentTarget.classList.add('selected');
-          this.store.selectMessage(msg);
+          this.store.selectedMessage = msg;
         }
       }
     }
@@ -181,10 +181,10 @@ div.sender {
 }
 
 .inbound:hover {
-  box-shadow: 0px 0px 2px 20px rgba(0, 100, 0, .4);
+  box-shadow: 0 0 2px 20px rgba(0, 100, 0, .4);
 }
 .message-container.selected .inbound {
-  box-shadow: 0px 0px 2px 20px rgba(190, 205, 175, .4);
+  box-shadow: 0 0 2px 20px rgba(190, 205, 175, .4);
 }
 
 .message-container.selected .message .stars-container {
@@ -224,13 +224,13 @@ div.sender {
 
 @keyframes gradientShift {
   0% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
   50% {
     background-position: 100% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
 }
 

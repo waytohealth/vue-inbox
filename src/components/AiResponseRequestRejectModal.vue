@@ -39,7 +39,6 @@ export default {
         { value: null, text: 'Please select an option' },
         { value: 'incorrect', text: 'The response is factually incorrect' },
         { value: 'incomplete', text: 'The response is incomplete' },
-        { value: 'style', text: 'There is an issue with the styling of the response' },
         { value: 'other', text: 'Other' }
       ]
     }
