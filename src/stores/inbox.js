@@ -11,6 +11,8 @@ class InboxStore {
         this.auth = auth;
 
         this.messagesObj = {};
+        this.selectedMessage = null;
+        this.aiGeneratedResponse = null;
 
         this.meta = {
             lastUpdated: null,
@@ -21,7 +23,9 @@ class InboxStore {
             older: false,
             initial: false,
             polling: false,
-            send: false
+            send: false,
+            suggestResponse: false,
+            refreshResponse: false,
         };
         this.imageCache = {};
     }
@@ -232,8 +236,134 @@ class InboxStore {
         let obj = {};
         obj[text.id] = text;
 
+        this.selectedMessage = null;
         this.messagesObj = Object.assign({}, this.messagesObj, obj);
         this.loading.send = false;
+    }
+
+    async sendSuggestedMessage(message, imageUrl) {
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
+        let body = [
+            {
+                op: 'replace',
+                path: '/final',
+                value: message
+            }
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
+
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        //once we've updated the AiResponseRequest we can generate/send the text message
+        await this.sendMessage(message, imageUrl);
+        this.aiGeneratedResponse = null;
+        this.selectedMessage = null;
+    }
+
+    async rejectSuggestedMessage(rejectComment) {
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
+        let body = [
+            {
+                op: 'replace',
+                path: '/review',
+                value: 'Rejected'
+            },
+            {
+                op: 'replace',
+                path: '/comment',
+                value: rejectComment
+            },
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
+
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        this.aiGeneratedResponse = null;
+        this.selectedMessage = null;
+    }
+    async refreshSuggestedMessage() {
+        if (this.loading.refreshResponse) {
+            return false;
+        }
+
+        if (!this.aiGeneratedResponse) {
+            return false;
+        }
+
+        this.loading.refreshResponse = true;
+        let body = [
+            {
+                op: 'replace',
+                path: '/review',
+                value: 'Refreshed'
+            }
+        ];
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "PATCH",
+            body: JSON.stringify(body)
+        });
+
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests/${this.aiGeneratedResponse.id}`, requestParams);
+        if (!res.ok) {
+            this.loading.older = false;
+            throw new Error("womp");
+        }
+
+        await this.suggestResponse();
+        this.loading.refreshResponse = false;
+    }
+
+    async suggestResponse() {
+        if (this.loading.suggestResponse) {
+            return false;
+        }
+
+        if (!this.selectedMessage) {
+            return false;
+        }
+
+        let body = {
+            input: this.selectedMessage.message_text,
+            participant_id: this.participantId
+        }
+
+        let auth = this.authCredentials();
+        let requestParams = Object.assign(auth, {
+            method: "POST",
+            body: JSON.stringify(body)
+        });
+
+        this.loading.suggestResponse = true;
+        let res = await fetch(`${this.apiBaseUrl}/api/v2/ai_response_requests`, requestParams);
+        if (!res.ok) {
+            this.loading.suggestResponse = false;
+            throw new Error("womp");
+        }
+        this.aiGeneratedResponse = (await res.json()).data;
+        this.loading.suggestResponse = false;
     }
 }
 

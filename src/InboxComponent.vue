@@ -29,6 +29,7 @@
           :store="store"
           :show-load-more="store.loading.older"
           @openImageLightbox="openImageLightbox"
+          @suggestResponse="suggestResponse"
         />
       </div>
     </div>
@@ -42,7 +43,10 @@
       :store="store"
       :helper="manualModeHelper"
     />
-
+    <AiResponseRequestRejectModal
+        :store="store"
+        @submit="rejectSuggestedResponse"
+    />
     <div>
       <slot
         name="imagePicker"
@@ -52,46 +56,112 @@
       />
       <InputArea
         v-model="textContent"
-        :disabled="store.loading.send"
+        :disabled="disableTextInput"
         :show-image-upload-invoker="imageUploadEnabled && !imageUrl"
         @openImageUpload="showImageUploader = true"
       />
-      <div v-if="imageUrl">
-        <h4>Attachments</h4>
-        <ul class="list-unstyled">
-          <li>
-            <span class="filename">{{ imageName }}</span>
-            <button
-              class="btn btn-link"
-              type="button"
-              @click="removeAttachment"
-            >
-              <span class="fa fa-trash text-danger" />
-              <span class="sr-only">Remove</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-      <input
-        v-if="!store.loading.send"
-        type="submit"
-        value="Send SMS Message"
-        :class="styleConfig.inboxSubmit"
-        :disabled="store.loading.send"
-        @click="sendMessage"
-      >
+      <div v-if="!store.aiGeneratedResponse" class="inbox-action-items">
+        <div v-if="imageUrl">
+          <h4>Attachments</h4>
+          <ul class="list-unstyled">
+            <li>
+              <span class="filename">{{ imageName }}</span>
+              <button
+                class="btn btn-link"
+                type="button"
+                @click="removeAttachment"
+              >
+                <span class="fa fa-trash text-danger" />
+                <span class="sr-only">Remove</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+        <input
+          v-if="!store.loading.send"
+          type="submit"
+          value="Send SMS Message"
+          :class="styleConfig.inboxSubmit"
+          :disabled="store.loading.send"
+          @click="sendMessage"
+        >
 
-      <div
-        v-else
-        :class="styleConfig.inboxSubmit"
-        class="disabled"
-      >
-        Send SMS Message
-        <b-spinner
-          small
-          variant="light"
-          label="Spinning"
-        />
+        <div
+            v-else
+            :class="styleConfig.inboxSubmit"
+            class="disabled"
+        >
+          Send SMS Message
+          <b-spinner
+              small
+              variant="light"
+              label="Spinning"
+          />
+        </div>
+
+        <input
+            v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
+            type="submit"
+            value="Suggest Response"
+            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
+            :disabled="store.loading.suggestResponse && !store.selectedMessage"
+            @click="suggestResponse"
+        >
+        <div
+            v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
+            id="ai-response-info"
+            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
+        >
+          Suggest Response
+          <b-spinner v-if="store.loading.suggestResponse"
+                     small
+                     variant="light"
+                     label="Spinning"
+          />
+          <span v-if="!store.selectedMessage">
+            <b-icon
+                id="ai-response-info-icon"
+                icon="info-circle-fill"
+                variant="primary"
+                font-scale="1"
+                class="ml-1"
+            />
+          </span>
+          <b-popover
+              target="ai-response-info"
+              title="AI generated responses are enabled"
+              triggers="click blur"
+              placement="right"
+          >
+            Select an inbound message above and click "Suggest Response" to generate a response.
+          </b-popover>
+        </div>
+      </div>
+      <div v-else class="inbox-action-items mt-1">
+        <b-button variant="primary"
+                  :disabled="store.loading.send"
+                  @click="sendSuggestedResponse">
+          <b-icon icon="hand-thumbs-up"/>
+          Send
+        </b-button>
+        <b-button variant="danger"
+                  :disabled="store.loading.send"
+                  @click="openRejectCommentModal">
+          <b-icon icon="hand-thumbs-down"/>
+          Reject
+        </b-button>
+        <b-button variant="secondary"
+                  :disabled="store.loading.send"
+                  :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
+                  @click="refreshSuggestedResponse">
+          <b-icon icon="recycle"/>
+          Refresh
+          <b-spinner v-if="store.loading.refreshResponse"
+                     small
+                     variant="light"
+                     label="Spinning"
+          />
+        </b-button>
       </div>
     </div>
   </div>
@@ -108,6 +178,7 @@ import InputArea from "./components/InputArea.vue";
 import GalleryView from "./components/GalleryView.vue";
 import MessageView from "./components/MessageView.vue";
 import ManualModeToggle from "./components/ManualModeToggle.vue";
+import AiResponseRequestRejectModal from "./components/AiResponseRequestRejectModal.vue";
 
 export default {
   name: "InboxComponent",
@@ -117,6 +188,7 @@ export default {
     InputArea,
     ImageLightbox,
     MessageView,
+    AiResponseRequestRejectModal
   },
   props: {
     auth: {
@@ -162,6 +234,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    aiSuggestionsEnabled: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -186,6 +262,11 @@ export default {
     }
   },
   computed: {
+    disableTextInput() {
+      return !!this.store.loading.send
+          || !!this.store.loading.suggestResponse
+          || !!this.store.loading.refreshResponse;
+    },
     sortedMessages() {
       if (Object.keys(this.store.messagesObj).length > 0) {
         return this.inboxHelper.sortMessages(Object.values(this.store.messagesObj));
@@ -264,6 +345,9 @@ export default {
       this.showImageLightbox = true;
       this.$refs.imageLightbox.open(msgId, imageIndex, this.galleryView);
     },
+    openRejectCommentModal() {
+      this.$bvModal.show('reject-comment-modal');
+    },
     scrollToNewest(behavior = 'auto') {
       const el = this.$el.querySelector('.inbox');
       const scrollToOffset = this.galleryView ? 0 : el.scrollHeight;
@@ -299,6 +383,34 @@ export default {
         this.imageName = '';
       }
     },
+    async sendSuggestedResponse() {
+      if (this.textContent.length && this.store.aiGeneratedResponse) {
+        await this.store.sendSuggestedMessage(this.textContent, this.imageUrl);
+        this.$el?.querySelector('.message-container.selected').classList.remove('selected');
+        this.scrollToNewest('smooth');
+        this.textContent = "";
+        this.imageUrl = '';
+        this.imageName = '';
+      }
+    },
+    async rejectSuggestedResponse(comment) {
+      if (this.store.aiGeneratedResponse) {
+        await this.store.rejectSuggestedMessage(comment);
+        this.$el?.querySelector('.message-container.selected').classList.remove('selected');
+        this.textContent = "";
+        this.imageUrl = '';
+        this.imageName = '';
+        this.$bvModal.hide('reject-comment-modal');
+      }
+    },
+    async refreshSuggestedResponse() {
+      await this.store.refreshSuggestedMessage();
+      this.textContent = this.store.aiGeneratedResponse.response;
+    },
+    async suggestResponse() {
+      await this.store.suggestResponse();
+      this.textContent = this.store.aiGeneratedResponse.response;
+    },
     poll() {
       setTimeout(() => {
         this.store.poll();
@@ -317,6 +429,7 @@ export default {
   overflow-y: scroll;
   border-bottom: 2px solid rgba(0, 0, 0, .2);
 }
+
 @media print {
   .inbox {
     max-height: none;
@@ -324,19 +437,79 @@ export default {
   }
 }
 
-/deep/ .time {
+::v-deep .time {
   float: right;
   margin: 0 3px 0;
   color: gray;
 }
 
-/deep/ .status-icon {
+::v-deep .status-icon {
   float: left;
   cursor: pointer;
   margin: 0 3px 0;
 }
 
-/deep/ .cursor-pointer {
+::v-deep .cursor-pointer {
   cursor: pointer;
+}
+
+::v-deep .suggest-response-button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+::v-deep .suggest-response-button.selected {
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  background-size: 400% 400%;
+  color: white;
+}
+
+::v-deep .suggest-response-button.selected.loading {
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+::v-deep .refresh-button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+::v-deep .refresh-button.selected {
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  background-size: 400% 400%;
+  color: white;
+}
+
+::v-deep .refresh-button.selected.loading {
+  animation: gradientShift 3s ease-in-out infinite;
 }
 </style>
