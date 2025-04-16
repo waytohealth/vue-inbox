@@ -13,7 +13,7 @@
           {{ msg.sender }}
         </div>
         <div class="message-container" @click="selectMessage($event, msg)">
-          <div class="message" :class="inboxHelper.messageClasses(msg)">
+          <div class="message" :class="inboxHelper.messageClasses(msg, showAiIcon)">
             <span
               v-b-tooltip.hover
               class="time"
@@ -65,7 +65,7 @@
             </ul>
             <div 
               class="stars-container" 
-              v-if="msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
+              v-if="showAiIcon && msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
               @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
             >
               <b-icon 
@@ -88,7 +88,7 @@ import LazyImage from "./LazyImage.vue";
 import {isJustEmoji} from "@/helpers/emojiHelper";
 
 export default {
-  name: "GalleryView",
+  name: "MessageView",
   components: {
     LazyImage
   },
@@ -108,6 +108,10 @@ export default {
     showLoadMore: {
       type: Boolean,
       required: false
+    },
+    showAiIcon: {
+      type: Boolean,
+      required: false
     }
   },
   data() {
@@ -117,7 +121,7 @@ export default {
   },
   methods: {
     selectMessage: function(event, msg) {
-      if (msg.direction === 'inbound') {
+      if (this.showAiIcon && msg.direction === 'inbound') {
         let previouslySelectedMessage = this.$el?.querySelector('.message-container.selected');
 
         if (previouslySelectedMessage) {
@@ -180,7 +184,7 @@ div.sender {
   box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
 }
 
-.inbound:hover {
+.inbound.ai-suggestion-selectable:hover {
   box-shadow: 0 0 2px 20px rgba(0, 100, 0, .4);
 }
 .message-container.selected .inbound {
