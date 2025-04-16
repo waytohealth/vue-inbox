@@ -71,10 +71,13 @@ let helper = {
       return number;
     }
   },
-  messageClasses: function(msg) {
+  messageClasses: function(msg, aiSuggestionsEnabled) {
     let classes = [];
     classes.push(msg.direction === 'inbound' ? 'inbound' : 'outbound');
     classes.push(msg.sender ? 'manual' : 'automated');
+    if (aiSuggestionsEnabled) {
+      classes.push('ai-suggestion-selectable');
+    }
     return classes;
   },
   messageStatus: function(msg) {

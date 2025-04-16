@@ -28,6 +28,7 @@
           :inbox-helper="inboxHelper"
           :store="store"
           :show-load-more="store.loading.older"
+          :show-ai-icon="aiSuggestionsEnabled"
           @openImageLightbox="openImageLightbox"
           @suggestResponse="suggestResponse"
         />
@@ -122,7 +123,7 @@
             <b-icon
                 id="ai-response-info-icon"
                 icon="info-circle-fill"
-                variant="primary"
+                variant="dark"
                 font-scale="1"
                 class="ml-1"
             />
