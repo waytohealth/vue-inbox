@@ -123,10 +123,12 @@ export default {
       });
     },
     resizeTextarea(newVal) {
-      const textarea = this.$refs.textarea;
-      textarea.style.height = "auto"; // reset
-      textarea.style.fontSize = isJustEmoji(newVal) ? '1.8rem' : null;
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      this.$nextTick(() => {
+        const textarea = this.$refs.textarea;
+        textarea.style.height = "auto"; // reset
+        textarea.style.fontSize = isJustEmoji(newVal) ? '1.8rem' : null;
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      });
     },
   },
 
