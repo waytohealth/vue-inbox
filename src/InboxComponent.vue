@@ -28,7 +28,7 @@
           :inbox-helper="inboxHelper"
           :store="store"
           :show-load-more="store.loading.older"
-          :show-ai-icon="aiSuggestionsEnabled"
+          :show-ai-icon="!readOnly && aiSuggestionsEnabled"
           @openImageLightbox="openImageLightbox"
           @suggestResponse="suggestResponse"
         />
@@ -48,7 +48,7 @@
         :store="store"
         @submit="rejectSuggestedResponse"
     />
-    <div>
+    <div v-if="!readOnly">
       <slot
         name="imagePicker"
         :attach-image="attachImage"
@@ -239,6 +239,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
     styles: {
       type: Object,
       required: false,
@@ -301,7 +305,7 @@ export default {
       this.$nextTick(() => {
         this.scrollToNewest();
       });
-    }
+  }
   },
   async created() {
     this.store = new InboxStore(
