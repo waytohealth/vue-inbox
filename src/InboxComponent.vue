@@ -305,7 +305,7 @@ export default {
       this.$nextTick(() => {
         this.scrollToNewest();
       });
-  }
+    }
   },
   async created() {
     this.store = new InboxStore(
