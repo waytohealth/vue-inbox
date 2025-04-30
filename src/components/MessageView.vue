@@ -184,29 +184,7 @@ div.sender {
   box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
 }
 
-.inbound.ai-suggestion-selectable:hover {
-  box-shadow: 0 0 2px 2px rgba(0, 100, 0, .4);
-}
 
-.inbound.ai-suggestion-selectable:hover::before {
-  box-shadow: -2px 2px 2px 0 rgba(0, 100, 0, .4);
-}
-
-.message-container.selected .inbound {
-  box-shadow: 0 0 4px 4px rgba(0, 100, 0, .6);
-}
-
-.message-container.selected .inbound::before {
-  box-shadow: -2px 2px 2px 0 rgba(0, 100, 0, .6);
-}
-
-.message-container.selected .outbound {
-  box-shadow: 0 0 4px 4px rgba(0, 100, 0, .6);
-}
-
-.message-container.selected .outbound::before {
-  box-shadow: 2px -2px 2px 0 rgba(0, 100, 0, .6);
-}
 
 .message-container.selected .selected-icon {
   color: white;
@@ -264,6 +242,7 @@ div.sender {
   float: right;
 }
 
+/* Stars container for AI suggestion */
 .message-container.selected .message .stars-container {
   position: absolute;
   left: 100%;
@@ -311,4 +290,20 @@ div.sender {
   }
 }
 
+/* Hover and selected effect for inbound messages that are selectable for AI suggestions */
+.inbound.ai-suggestion-selectable:hover {
+  box-shadow: 0 0 3px 3px rgba(128, 128, 128, .5);
+}
+
+.inbound.ai-suggestion-selectable:hover::before {
+  box-shadow: -2px 2px 3px 0 rgba(128, 128, 128, .5);
+}
+
+.message-container.selected .inbound {
+  box-shadow: 0 0 5px 5px rgba(128, 128, 128, .7);
+}
+
+.message-container.selected .inbound::before {
+  box-shadow: -2px 2px 3px 0 rgba(128, 128, 128, .7);
+}
 </style>
