@@ -100,14 +100,16 @@
           />
         </div>
 
-        <input
+        <button
             v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
             type="submit"
-            value="Suggest Response"
             :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
             :disabled="store.loading.suggestResponse && !store.selectedMessage"
             @click="suggestResponse"
         >
+          Suggest Response
+          <b-icon icon="stars" class="ml-1"/>
+        </button>
         <div
             v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
             id="ai-response-info"
@@ -122,8 +124,8 @@
           <span v-if="!store.selectedMessage">
             <b-icon
                 id="ai-response-info-icon"
-                icon="info-circle-fill"
-                variant="dark"
+                icon="stars"
+                variant="light"
                 font-scale="1"
                 class="ml-1"
             />
