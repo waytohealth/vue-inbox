@@ -155,7 +155,7 @@
                   :disabled="store.loading.send"
                   :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
                   @click="refreshSuggestedResponse">
-          <b-icon icon="recycle"/>
+          <b-icon icon="arrow-clockwise"/>
           Refresh
           <b-spinner v-if="store.loading.refreshResponse"
                      small
