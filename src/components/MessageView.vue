@@ -185,57 +185,27 @@ div.sender {
 }
 
 .inbound.ai-suggestion-selectable:hover {
-  box-shadow: 0 0 2px 20px rgba(0, 100, 0, .4);
+  box-shadow: 0 0 2px 2px rgba(0, 100, 0, .4);
 }
+
+.inbound.ai-suggestion-selectable:hover::before {
+  box-shadow: -2px 2px 2px 0 rgba(0, 100, 0, .4);
+}
+
 .message-container.selected .inbound {
-  box-shadow: 0 0 2px 20px rgba(190, 205, 175, .4);
+  box-shadow: 0 0 4px 4px rgba(0, 100, 0, .6);
 }
 
-.message-container.selected .message .stars-container {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-left: 25px;
-  background: linear-gradient(135deg, 
-    #6366f1 0%, 
-    #8b5cf6 25%, 
-    #d1d5db 50%, 
-    #6366f1 75%, 
-    #8b5cf6 100%
-  );
-  padding: 12px;
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: 400% 400%;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+.message-container.selected .inbound::before {
+  box-shadow: -2px 2px 2px 0 rgba(0, 100, 0, .6);
 }
 
-.message-container.selected .message .stars-container:hover:not(:has(.text-muted)) {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.message-container.selected .outbound {
+  box-shadow: 0 0 4px 4px rgba(0, 100, 0, .6);
 }
 
-.message-container.selected .message .stars-container:has(.text-muted) {
-  animation: gradientShift 3s ease-in-out infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
+.message-container.selected .outbound::before {
+  box-shadow: 2px -2px 2px 0 rgba(0, 100, 0, .6);
 }
 
 .message-container.selected .selected-icon {
@@ -292,6 +262,53 @@ div.sender {
 
 .message-container .outbound {
   float: right;
+}
+
+.message-container.selected .message .stars-container {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 25px;
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 25%, 
+    #d1d5db 50%, 
+    #6366f1 75%, 
+    #8b5cf6 100%
+  );
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 400% 400%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.message-container.selected .message .stars-container:hover:not(:has(.text-muted)) {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.message-container.selected .message .stars-container:has(.text-muted) {
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
 
 </style>
