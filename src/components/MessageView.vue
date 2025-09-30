@@ -64,8 +64,8 @@
               </li>
             </ul>
             <div 
-              class="stars-container" 
-              v-if="showAiIcon && msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
+              v-if="showAiIcon && msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id" 
+              class="stars-container"
               @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
             >
               <b-icon 
@@ -73,10 +73,9 @@
                 icon="stars" 
                 scale="2"
                 :class="{'text-muted': store.loading.suggestResponse}"
-              ></b-icon>
+              />
             </div>
           </div>
-          
         </div>
       </div>
     </div>

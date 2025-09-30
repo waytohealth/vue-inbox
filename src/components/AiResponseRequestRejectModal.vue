@@ -1,21 +1,29 @@
 <template>
   <b-modal
-      id="reject-comment-modal"
-      title="Reject AI Suggested Response"
+    id="reject-comment-modal"
+    title="Reject AI Suggested Response"
   >
     <p><strong>Please select a reason for rejecting this response and click submit.</strong></p>
-    <b-form-select v-model="rejectComment" :options="rejectOptions">
-    </b-form-select>
+    <b-form-select v-model="rejectComment" :options="rejectOptions" />
     <b-form-input
-        class="mt-2"
-        v-if="rejectComment === 'other'"
-        v-model="otherValue"
-        placeholder="Enter reason for rejection" />
+      v-if="rejectComment === 'other'"
+      v-model="otherValue"
+      class="mt-2"
+      placeholder="Enter reason for rejection"
+    />
     <template #modal-footer="{ ok, cancel }">
-      <b-button size="sm" variant="success" @click="onSubmit">
+      <b-button
+        size="sm"
+        variant="success"
+        @click="onSubmit"
+      >
         Submit
       </b-button>
-      <b-button size="sm" variant="danger" @click="cancel()">
+      <b-button
+        size="sm"
+        variant="danger"
+        @click="cancel()"
+      >
         Cancel
       </b-button>
     </template>

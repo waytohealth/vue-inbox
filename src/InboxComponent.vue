@@ -45,8 +45,8 @@
       :helper="manualModeHelper"
     />
     <AiResponseRequestRejectModal
-        :store="store"
-        @submit="rejectSuggestedResponse"
+      :store="store"
+      @submit="rejectSuggestedResponse"
     />
     <div v-if="!readOnly">
       <slot
@@ -88,81 +88,89 @@
         >
 
         <div
-            v-else
-            :class="styleConfig.inboxSubmit"
-            class="disabled"
+          v-else
+          :class="styleConfig.inboxSubmit"
+          class="disabled"
         >
           Send SMS Message
           <b-spinner
-              small
-              variant="light"
-              label="Spinning"
+            small
+            variant="light"
+            label="Spinning"
           />
         </div>
 
         <button
-            v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
-            type="submit"
-            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
-            :disabled="store.loading.suggestResponse && !store.selectedMessage"
-            @click="suggestResponse"
+          v-if="aiSuggestionsEnabled && store.selectedMessage && !store.loading.suggestResponse"
+          type="submit"
+          :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
+          :disabled="store.loading.suggestResponse && !store.selectedMessage"
+          @click="suggestResponse"
         >
           Suggest Response
-          <b-icon icon="stars" class="ml-1"/>
+          <b-icon icon="stars" class="ml-1" />
         </button>
         <div
-            v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
-            id="ai-response-info"
-            :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
+          v-else-if="aiSuggestionsEnabled && !store.selectedMessage || store.loading.suggestResponse"
+          id="ai-response-info"
+          :class="[styleConfig.inboxSuggestResponse, 'suggest-response-button', {'selected': store.selectedMessage, 'loading': store.loading.suggestResponse}]"
         >
           Suggest Response
-          <b-spinner v-if="store.loading.suggestResponse"
-                     small
-                     variant="light"
-                     label="Spinning"
+          <b-spinner
+            v-if="store.loading.suggestResponse"
+            small
+            variant="light"
+            label="Spinning"
           />
           <span v-if="!store.selectedMessage">
             <b-icon
-                id="ai-response-info-icon"
-                icon="stars"
-                variant="light"
-                font-scale="1"
-                class="ml-1"
+              id="ai-response-info-icon"
+              icon="stars"
+              variant="light"
+              font-scale="1"
+              class="ml-1"
             />
           </span>
           <b-popover
-              target="ai-response-info"
-              title="AI generated responses are enabled"
-              triggers="click blur"
-              placement="right"
+            target="ai-response-info"
+            title="AI generated responses are enabled"
+            triggers="click blur"
+            placement="right"
           >
             Select an inbound message above and click "Suggest Response" to generate a response.
           </b-popover>
         </div>
       </div>
       <div v-else class="inbox-action-items mt-1">
-        <b-button variant="primary"
-                  :disabled="store.loading.send"
-                  @click="sendSuggestedResponse">
-          <b-icon icon="hand-thumbs-up"/>
+        <b-button
+          variant="primary"
+          :disabled="store.loading.send"
+          @click="sendSuggestedResponse"
+        >
+          <b-icon icon="hand-thumbs-up" />
           Send
         </b-button>
-        <b-button variant="danger"
-                  :disabled="store.loading.send"
-                  @click="openRejectCommentModal">
-          <b-icon icon="hand-thumbs-down"/>
+        <b-button
+          variant="danger"
+          :disabled="store.loading.send"
+          @click="openRejectCommentModal"
+        >
+          <b-icon icon="hand-thumbs-down" />
           Reject
         </b-button>
-        <b-button variant="secondary"
-                  :disabled="store.loading.send"
-                  :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
-                  @click="refreshSuggestedResponse">
-          <b-icon icon="arrow-clockwise"/>
+        <b-button
+          variant="secondary"
+          :disabled="store.loading.send"
+          :class="{'refresh-button': true, 'selected': store.selectedMessage, 'loading': store.loading.refreshResponse}"
+          @click="refreshSuggestedResponse"
+        >
+          <b-icon icon="arrow-clockwise" />
           Refresh
-          <b-spinner v-if="store.loading.refreshResponse"
-                     small
-                     variant="light"
-                     label="Spinning"
+          <b-spinner
+            v-if="store.loading.refreshResponse"
+            small
+            variant="light"
+            label="Spinning"
           />
         </b-button>
       </div>
