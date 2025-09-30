@@ -365,6 +365,10 @@ class InboxStore {
         this.aiGeneratedResponse = (await res.json()).data;
         this.loading.suggestResponse = false;
     }
+
+    setSelectedMessage(message) {
+      this.selectedMessage = message;
+    }
 }
 
 export default InboxStore;
