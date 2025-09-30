@@ -91,6 +91,7 @@ export default {
   components: {
     LazyImage
   },
+  inject: ['store'],
   props: {
     messagesByDate: {
       type: [Object, Array],
@@ -99,10 +100,6 @@ export default {
     inboxHelper: {
       type: Object,
       required: true,
-    },
-    store: {
-      type: Object,
-      required: true
     },
     showLoadMore: {
       type: Boolean,

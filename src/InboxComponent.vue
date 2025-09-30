@@ -26,7 +26,6 @@
           v-else
           :messages-by-date="messagesByDate"
           :inbox-helper="inboxHelper"
-          :store="store"
           :show-load-more="store.loading.older"
           :show-ai-icon="!readOnly && aiSuggestionsEnabled"
           @openImageLightbox="openImageLightbox"
@@ -200,6 +199,11 @@ export default {
     ImageLightbox,
     MessageView,
     AiResponseRequestRejectModal
+  },
+  provide() {
+    return {
+      store: this.store
+    };
   },
   props: {
     auth: {
