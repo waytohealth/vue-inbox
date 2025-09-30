@@ -25,6 +25,7 @@
         <MessageView
           v-else
           :messages-by-date="messagesByDate"
+          :store="store"
           :inbox-helper="inboxHelper"
           :show-load-more="store.loading.older"
           :show-ai-icon="!readOnly && aiSuggestionsEnabled"
@@ -200,11 +201,6 @@ export default {
     MessageView,
     AiResponseRequestRejectModal
   },
-  provide() {
-    return {
-      store: this.store
-    };
-  },
   props: {
     auth: {
       type: Object,
@@ -269,7 +265,13 @@ export default {
     return {
       scrolled: false,
       styleConfig: Object.assign(styles, this.styles),
-      store: null,
+      store: new InboxStore(
+          this.apiBaseUrl,
+          this.participantId,
+          this.resource,
+          this.studyId,
+          this.auth,
+      ),
       inboxHelper,
       manualModeHelper,
       textContent: "",
@@ -322,21 +324,8 @@ export default {
     }
   },
   async created() {
-    this.store = new InboxStore(
-      this.apiBaseUrl,
-      this.participantId,
-      this.resource,
-      this.studyId,
-      this.auth,
-    );
-
-    this.store.loadMessages()
-      .then(() => {
-        this.scrollToNewest();
-      }).catch((e) => {
-      // TODO: proper error handling
-      console.log(e);
-    });
+    await this.store.loadMessages();
+    this.scrollToNewest();
   },
   mounted() {
     // Only scroll on first mount - if we e.g. switch back and forth between tabs, on subsequent mounts
@@ -481,11 +470,11 @@ export default {
 }
 
 ::v-deep .suggest-response-button.selected {
-  background: linear-gradient(135deg, 
-    #6366f1 0%, 
-    #8b5cf6 25%, 
-    #d1d5db 50%, 
-    #6366f1 75%, 
+  background: linear-gradient(135deg,
+    #6366f1 0%,
+    #8b5cf6 25%,
+    #d1d5db 50%,
+    #6366f1 75%,
     #8b5cf6 100%
   );
   background-size: 400% 400%;
@@ -517,11 +506,11 @@ export default {
 }
 
 ::v-deep .refresh-button.selected {
-  background: linear-gradient(135deg, 
-    #6366f1 0%, 
-    #8b5cf6 25%, 
-    #d1d5db 50%, 
-    #6366f1 75%, 
+  background: linear-gradient(135deg,
+    #6366f1 0%,
+    #8b5cf6 25%,
+    #d1d5db 50%,
+    #6366f1 75%,
     #8b5cf6 100%
   );
   background-size: 400% 400%;

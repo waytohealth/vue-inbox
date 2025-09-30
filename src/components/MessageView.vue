@@ -63,14 +63,14 @@
                 />
               </li>
             </ul>
-            <div 
-              v-if="showAiIcon && msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id" 
+            <div
+              v-if="showAiIcon && msg.direction === 'inbound' && store.selectedMessage && store.selectedMessage.id === msg.id"
               class="stars-container"
               @click.stop="!store.loading.suggestResponse && $emit('suggestResponse')"
             >
-              <b-icon 
-                class="selected-icon" 
-                icon="stars" 
+              <b-icon
+                class="selected-icon"
+                icon="stars"
                 scale="2"
                 :class="{'text-muted': store.loading.suggestResponse}"
               />
@@ -91,8 +91,11 @@ export default {
   components: {
     LazyImage
   },
-  inject: ['store'],
   props: {
+    store: {
+      type: Object,
+      required: true
+    },
     messagesByDate: {
       type: [Object, Array],
       required: true,
@@ -122,12 +125,12 @@ export default {
 
         if (previouslySelectedMessage) {
           previouslySelectedMessage.classList.remove('selected');
-          this.store.selectedMessage = null;
+          this.store.setSelectedMessage(null);
         }
 
         if (previouslySelectedMessage !== event.currentTarget) {
           event.currentTarget.classList.add('selected');
-          this.store.selectedMessage = msg;
+          this.store.setSelectedMessage(msg);
         }
       }
     }
@@ -266,11 +269,11 @@ div.sender {
   top: 50%;
   transform: translateY(-50%);
   margin-left: 25px;
-  background: linear-gradient(135deg, 
-    #6366f1 0%, 
-    #8b5cf6 25%, 
-    #d1d5db 50%, 
-    #6366f1 75%, 
+  background: linear-gradient(135deg,
+    #6366f1 0%,
+    #8b5cf6 25%,
+    #d1d5db 50%,
+    #6366f1 75%,
     #8b5cf6 100%
   );
   padding: 12px;
