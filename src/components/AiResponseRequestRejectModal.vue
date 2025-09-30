@@ -11,7 +11,7 @@
       class="mt-2"
       placeholder="Enter reason for rejection"
     />
-    <template #modal-footer="{ ok, cancel }">
+    <template #modal-footer="{ cancel }">
       <b-button
         size="sm"
         variant="success"
